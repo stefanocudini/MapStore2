@@ -50,6 +50,9 @@ import * as epics from '../epics/layerdownload';
 
 import layerdownload from '../reducers/layerdownload';
 import { createPlugin } from '../utils/PluginsUtils';
+// import { Glyphicon } from 'react-bootstrap';
+// import Message from '../components/I18N/Message';
+
 
 const LayerDownloadButton = connect(() => ({}), {
     onClick: download
@@ -79,6 +82,20 @@ const LayerDownloadButton = connect(() => ({}), {
     }
     return null;
 });
+
+const LayerDownloadMenu = connect(null, {
+    onClick: download
+})(({onClick, itemComponent}) => {
+    const Component = itemComponent;
+    return (
+        <Component
+            onClick={onClick}
+            glyph="download"
+            textId="widgets.widget.menu.downloadData"
+        />
+    );
+});
+
 /**
  * Provides advanced data export functionalities using [WPS download process](https://docs.geoserver.org/stable/en/user/community/wps-download/index.html) or using WFS service, if WPS download process is missing.
  * @memberof plugins
@@ -122,8 +139,8 @@ const LayerDownloadButton = connect(() => ({}), {
  *              { "name": "image/tiff", "label": "TIFF", "type": "raster", "validServices": ["wps"] },
  *              { "name": "image/png", "label": "PNG", "type": "raster", "validServices": ["wps"] },
  *              { "name": "image/jpeg", "label": "JPEG", "type": "raster", "validServices": ["wps"]},
- *              { "name": "application/wfs-collection-1.0", "label": "wfs-collection-1.0", "type": "vector", "validServices": ["wps"] },
- *              { "name": "application/wfs-collection-1.1", "label": "wfs-collection-1.1", "type": "vector", "validServices": ["wps"] },
+ *              { "name": "application/wfs-collection-1.0", label: "GML2", type: "vector", validServices: ["wps"]},
+ *              { "name": "application/wfs-collection-1.1", label: "GML3", type: "vector", validServices: ["wps"]}
  *              { "name": "application/zip", "label": "Shapefile", "type": "vector", "validServices": ["wps"] },
  *              { "name": "text/csv", "label": "CSV", "type": "vector", "validServices": ["wps"] },
  *
@@ -159,10 +176,31 @@ const LayerDownloadPlugin = createPlugin('LayerDownload', {
         onClose: () => toggleControl("layerdownload")
     })(DownloadDialog),
     containers: {
+        // Widgets: {   // /usanto anche viewer map
+        //     // inject Download menu in Widgets Dropdown menu
+        //     doNotHide: true,
+        //     name: "LayerDownload",
+        //     target: "table-menu-download",
+        //     position: 11,
+        //     priority: 1,
+        //     // TODO Component: LayerDownloadMenu, copy events from LayerDownloadButton
+        //     Componenent: (<>
+        //         <Glyphicon glyph="download" />
+        //         <Message msgId="widgets.widget.menu.downloadData"/>
+        //     </>)
+        // },
+        Dashboard: {    // /usanto anche viewer map
+            // inject Download menu in Widgets Dropdown menu
+            doNotHide: true,
+            name: "LayerDownload",
+            target: "table-menu-download",
+            position: 11,
+            Component: LayerDownloadMenu
+        },
         TOC: {
             doNotHide: true,
             name: "LayerDownload",
-            target: 'toolbar',
+            target: "toolbar",
             Component: LayerDownloadButton,
             position: 11
         },

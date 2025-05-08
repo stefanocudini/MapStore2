@@ -21,6 +21,7 @@ const getWidgetOpts = (w) => w?.widgetOpts?.[w.widgetType];
  * Renders proper widget by widgetType, binding props and methods
  */
 const DefaultWidget = ({
+    items,
     dependencies,
     toggleCollapse = () => {},
     exportCSV = () => {},
@@ -40,6 +41,7 @@ const DefaultWidget = ({
             dependencies={dependencies}
             onDelete={onDelete}
             onEdit={onEdit}
+            items={items}
         />
         : w.widgetType === "counter"
             ? <CounterWidget {...w}

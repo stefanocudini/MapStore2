@@ -22,6 +22,25 @@ import DownloadOptions from './DownloadOptions';
 import Button from '../../misc/Button';
 import {getAttributesList} from "../../../utils/FeatureGridUtils";
 
+/**
+ * @prop {Array<{
+ *   name: string,               // MIME type of the format (e.g., 'application/json')
+ *   label: string,              // Human-readable label shown in the UI (e.g., 'GeoJSON')
+ *   type: 'vector' | 'raster',  // Type of data format, used to filter or group options
+ *   validServices: string[]     // List of services this format is valid for (e.g., ['wps', 'wfs'])
+ * }>} formats -
+ * List of available export formats. Each format defines the MIME type, display label,
+ * type of data (vector or raster), and the services (e.g., WPS, WFS) that support it.
+ * ABOUT MIME TYPES: 'application/wfs-collection-1.0' AND 'application/wfs-collection-1.1'
+
+    There is no direct 1:1 mapping, but if you want to export the same feature content using GML, the equivalent output formats would be:
+
+    JSON Format	GML Equivalent MIME Type	Notes
+    wfs-collection-1.0	text/xml; subtype=gml/2.1.2	Similar to WFS 1.0 with GML 2
+    wfs-collection-1.1	text/xml; subtype=gml/3.1.1	Similar to WFS 1.1 with GML 3.1
+
+    refer: https://docs.geoserver.org/main/en/user/services/wfs/outputformats.html
+ */
 class DownloadDialog extends React.Component {
     static propTypes = {
         filterObj: PropTypes.object,
@@ -69,13 +88,13 @@ class DownloadDialog extends React.Component {
         defaultSelectedService: 'wps',
         wfsFormats: [],
         formats: [
-            {name: 'application/json', label: 'GeoJSON', type: 'vector', validServices: ['wps']},
-            {name: 'application/arcgrid', label: 'ArcGrid', type: 'raster', validServices: ['wps']},
             {name: 'image/tiff', label: 'TIFF', type: 'raster', validServices: ['wps']},
-            {name: 'application/wfs-collection-1.0', label: 'wfs-collection-1.0', type: 'vector', validServices: ['wps']},
-            {name: 'application/wfs-collection-1.1', label: 'wfs-collection-1.1', type: 'vector', validServices: ['wps']},
+            {name: 'application/arcgrid', label: 'ArcGrid', type: 'raster', validServices: ['wps']},
+            {name: 'application/json', label: 'GeoJSON', type: 'vector', validServices: ['wps']},
             {name: 'application/zip', label: 'Shapefile', type: 'vector', validServices: ['wps']},
-            {name: 'text/csv', label: 'CSV', type: 'vector', validServices: ['wps']}
+            {name: 'text/csv', label: 'CSV', type: 'vector', validServices: ['wps']},
+            {name: 'application/wfs-collection-1.0', label: 'GML2', type: 'vector', validServices: ['wps']},
+            {name: 'application/wfs-collection-1.1', label: 'GML3', type: 'vector', validServices: ['wps']}
         ],
         formatsLoading: false,
         srsList: [
@@ -117,6 +136,7 @@ class DownloadDialog extends React.Component {
             validWFSFormats.filter(f => this.props.wfsFormats.find(wfsF => wfsF.name.toLowerCase() === f.name.toLowerCase())) :
             this.props.wfsFormats;
         const wfsAvailable = Boolean(this.props.layer.search?.url);
+        const formats = this.props.service === 'wfs' ? wfsFormats : validWPSFormats;
 
         return this.props.enabled ? (<Portal><Dialog id="mapstore-export" draggable={false} modal>
             <span role="header">
@@ -137,10 +157,9 @@ class DownloadDialog extends React.Component {
                             onChange={this.props.onDownloadOptionChange}
                             formatOptionsFetch={this.props.service === 'wfs' ? this.props.onFormatOptionsFetch : () => {}}
                             formatsLoading={this.props.formatsLoading}
-                            formats={this.props.service === 'wfs' ? wfsFormats : validWPSFormats}
+                            formats={formats}
                             srsList={this.props.srsList}
                             defaultSrs={this.props.defaultSrs}
-                            wpsOptionsVisible={this.props.service === 'wps'}
                             wpsAdvancedOptionsVisible={!this.props.layer.search?.url}
                             downloadFilteredVisible={!!this.props.layer.search?.url}
                             layer={this.props.layer}
@@ -154,7 +173,7 @@ class DownloadDialog extends React.Component {
                 <Button
                     bsStyle="primary"
                     className="download-button"
-                    disabled={!this.props.downloadOptions.selectedFormat || this.props.loading}
+                    disabled={this.props.loading || this.props.formats.length === 0}
                     onClick={this.handleExport}>
                     {this.renderIcon()} <Message msgId="layerdownload.export" />
                 </Button>
