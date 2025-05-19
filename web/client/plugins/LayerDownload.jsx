@@ -50,9 +50,6 @@ import * as epics from '../epics/layerdownload';
 
 import layerdownload from '../reducers/layerdownload';
 import { createPlugin } from '../utils/PluginsUtils';
-// import { Glyphicon } from 'react-bootstrap';
-// import Message from '../components/I18N/Message';
-
 
 const LayerDownloadButton = connect(() => ({}), {
     onClick: download
@@ -86,9 +83,10 @@ const LayerDownloadButton = connect(() => ({}), {
 const LayerDownloadMenu = connect(null, {
     onClick: download
 })(({onClick, itemComponent}) => {
-    const Component = itemComponent;
+    const ItemComponent = itemComponent;
+
     return (
-        <Component
+        <ItemComponent
             onClick={onClick}
             glyph="download"
             textId="widgets.widget.menu.downloadData"
@@ -176,21 +174,14 @@ const LayerDownloadPlugin = createPlugin('LayerDownload', {
         onClose: () => toggleControl("layerdownload")
     })(DownloadDialog),
     containers: {
-        // Widgets: {   // /usanto anche viewer map
-        //     // inject Download menu in Widgets Dropdown menu
-        //     doNotHide: true,
-        //     name: "LayerDownload",
-        //     target: "table-menu-download",
-        //     position: 11,
-        //     priority: 1,
-        //     // TODO Component: LayerDownloadMenu, copy events from LayerDownloadButton
-        //     Componenent: (<>
-        //         <Glyphicon glyph="download" />
-        //         <Message msgId="widgets.widget.menu.downloadData"/>
-        //     </>)
-        // },
-        Dashboard: {    // /usanto anche viewer map
-            // inject Download menu in Widgets Dropdown menu
+        Widgets: {   // /usanto anche viewer map
+            doNotHide: true,
+            name: "LayerDownload",
+            target: "table-menu-download",
+            position: 11,
+            Component: LayerDownloadMenu
+        },
+        Dashboard: {
             doNotHide: true,
             name: "LayerDownload",
             target: "table-menu-download",

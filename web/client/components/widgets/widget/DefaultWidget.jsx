@@ -56,7 +56,8 @@ const DefaultWidget = ({
                     toggleCollapse={toggleCollapse}
                     dependencies={dependencies}
                     onDelete={onDelete}
-                    onEdit={onEdit} />
+                    onEdit={onEdit}
+                    items={items} />
                 : w.widgetType === "legend"
                     ? <LegendWidget {...w}
                         {...getWidgetOpts(w)}
