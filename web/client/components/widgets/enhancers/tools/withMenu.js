@@ -26,7 +26,7 @@ const MenuItem = tooltip(MenuItemBS);
  * transform `widgetTools` property items with `target` = `menu` into a DropDown button to put in `topRightItems` for WidgetContainer, as a menu
  */
 export default ({ className = "widget-menu", menuIcon = "option-vertical"} = {}) =>
-    withProps(({ widgetTools, topRightItems = [], items = []}) => ({
+    withProps(({ widgetTools, topRightItems = [], items = [], layer }) => ({
         topRightItems: hasMenuItems(widgetTools)
             ? [...topRightItems, (
                 <ButtonToolbar>
@@ -43,12 +43,16 @@ export default ({ className = "widget-menu", menuIcon = "option-vertical"} = {})
                                     {textId ? <Message msgId={textId} /> : text}
                                 </MenuItem>)
                         }
-                        {items.map((item) => <item.Component key={item.name} itemComponent={(props) =>
-                            <MenuItem {...props}>
-                                <Glyphicon glyph={props.glyph} />
-                                <Message msgId={props.textId} />
-                            </MenuItem>
-                        } />)}
+                        {items.map((item) =>
+                            <item.Component
+                                key={item.name}
+                                layer={layer}
+                                itemComponent={(props) => (
+                                    <MenuItem {...props}>
+                                        <Glyphicon glyph={props.glyph} />
+                                        <Message msgId={props.textId} />
+                                    </MenuItem>)
+                                } />)}
                     </DropdownButton>
                 </ButtonToolbar>)]
             : topRightItems

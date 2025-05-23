@@ -82,14 +82,22 @@ const LayerDownloadButton = connect(() => ({}), {
 
 const LayerDownloadMenu = connect(null, {
     onClick: download
-})(({onClick, itemComponent}) => {
+})(({
+    onClick,
+    itemComponent,
+    layer
+}) => {
     const ItemComponent = itemComponent;
 
     return (
         <ItemComponent
-            onClick={onClick}
             glyph="download"
             textId="widgets.widget.menu.downloadData"
+            onClick={() => onClick({
+                url: layer.search?.url || layer.url,
+                name: layer.name,
+                id: layer.id
+            })}
         />
     );
 });
