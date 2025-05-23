@@ -11,8 +11,9 @@ import { createStructuredSelector } from 'reselect';
 
 import {
     downloadFeatures,
-    checkWPSAvailability,
+    // checkWPSAvailability,
     setService,
+    setWPSAvailability,
     onDownloadOptionChange,
     onFormatOptionsFetch,
     clearDownloadOptions,
@@ -42,7 +43,9 @@ import { getSelectedLayer } from '../selectors/layers';
 import { currentLocaleSelector } from '../selectors/locale';
 import { customAttributesSettingsSelector } from "../selectors/featuregrid";
 
-import DownloadDialog from '../components/data/download/DownloadDialog';
+// import DownloadDialog from '../components/data/download/DownloadDialog';
+import DownloadDialog from '../components/data/download/DownloadDialogFunc';
+
 import ExportDataResultsComponent from '../components/data/download/ExportDataResultsComponent';
 
 import FeatureEditorButton from '../components/data/download/FeatureEditorButton';
@@ -174,11 +177,12 @@ const LayerDownloadPlugin = createPlugin('LayerDownload', {
         attributes: attributesSelector
     }), {
         onExport: downloadFeatures,
-        setService,
+        onSetService: setService,
+        onSetWPSAvailability: setWPSAvailability,
         onDownloadOptionChange,
         onClearDownloadOptions: clearDownloadOptions,
         onFormatOptionsFetch,
-        onCheckWPSAvailability: checkWPSAvailability,
+        // onCheckWPSAvailability: checkWPSAvailability,
         onClose: () => toggleControl("layerdownload")
     })(DownloadDialog),
     containers: {
