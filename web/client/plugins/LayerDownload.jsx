@@ -43,8 +43,7 @@ import { getSelectedLayer } from '../selectors/layers';
 import { currentLocaleSelector } from '../selectors/locale';
 import { customAttributesSettingsSelector } from "../selectors/featuregrid";
 
-// import DownloadDialog from '../components/data/download/DownloadDialog';
-import DownloadDialog from '../components/data/download/DownloadDialogFunc';
+import DownloadDialog from '../components/data/download/DownloadDialog';
 
 import ExportDataResultsComponent from '../components/data/download/ExportDataResultsComponent';
 
@@ -53,6 +52,8 @@ import * as epics from '../epics/layerdownload';
 
 import layerdownload from '../reducers/layerdownload';
 import { createPlugin } from '../utils/PluginsUtils';
+
+import {getLayerId} from '../utils/LayersUtils';
 
 const LayerDownloadButton = connect(() => ({}), {
     onClick: download
@@ -99,7 +100,7 @@ const LayerDownloadMenu = connect(null, {
             onClick={() => onClick({
                 url: layer.search?.url || layer.url,
                 name: layer.name,
-                id: layer.id
+                id: getLayerId(layer)
             })}
         />
     );

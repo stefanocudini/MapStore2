@@ -9,26 +9,26 @@
 import Rx from 'rxjs';
 import { get, find, findIndex, pick, toPairs, castArray } from 'lodash';
 import { saveAs } from 'file-saver';
-import { parseString } from 'xml2js';
-import { stripPrefix } from 'xml2js/lib/processors';
+// import { parseString } from 'xml2js';
+// import { stripPrefix } from 'xml2js/lib/processors';
 import uuidv1 from 'uuid/v1';
 import { LOCATION_CHANGE } from 'connected-react-router';
 
 import {
     FORMAT_OPTIONS_FETCH,
     DOWNLOAD_FEATURES,
-    CHECK_WPS_AVAILABILITY,
+    //    CHECK_WPS_AVAILABILITY,
     SHOW_INFO_BUBBLE_MESSAGE,
     ADD_EXPORT_DATA_RESULT,
     REMOVE_EXPORT_DATA_RESULT,
     UPDATE_EXPORT_DATA_RESULT,
     CHECK_EXPORT_DATA_ENTRIES,
     SERIALIZE_COOKIE,
-    checkingWPSAvailability,
+    //    checkingWPSAvailability,
     onDownloadFinished,
     updateFormats,
     onDownloadOptionChange,
-    setService,
+    //    setService,
     showInfoBubble,
     setInfoBubbleMessage,
     setExportDataResults,
@@ -37,8 +37,8 @@ import {
     serializeCookie,
     addExportDataResult,
     updateExportDataResult,
-    showInfoBubbleMessage,
-    setWPSAvailability
+    showInfoBubbleMessage
+//    setWPSAvailability
 } from '../actions/layerdownload';
 import { TOGGLE_CONTROL, toggleControl } from '../actions/controls';
 import { DOWNLOAD } from '../actions/layers';
