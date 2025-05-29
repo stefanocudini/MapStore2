@@ -35,10 +35,11 @@ import {
     exportDataResultsControlEnabledSelector,
     exportDataResultsSelector,
     showInfoBubbleSelector,
+    downloadLayerSelector,
     infoBubbleMessageSelector,
     checkingExportDataEntriesSelector
 } from '../selectors/layerdownload';
-import {attributesSelector, wfsURL} from '../selectors/query';
+import {attributesSelector} from '../selectors/query';
 import { getSelectedLayer } from '../selectors/layers';
 import { currentLocaleSelector } from '../selectors/locale';
 import { customAttributesSettingsSelector } from "../selectors/featuregrid";
@@ -53,7 +54,6 @@ import * as epics from '../epics/layerdownload';
 import layerdownload from '../reducers/layerdownload';
 import { createPlugin } from '../utils/PluginsUtils';
 
-import {getLayerId} from '../utils/LayersUtils';
 
 const LayerDownloadButton = connect(() => ({}), {
     onClick: download
@@ -89,7 +89,8 @@ const LayerDownloadMenu = connect(null, {
 })(({
     onClick,
     itemComponent,
-    layer
+    layer,
+    widgetId
 }) => {
     const ItemComponent = itemComponent;
 
@@ -101,12 +102,7 @@ const LayerDownloadMenu = connect(null, {
         <ItemComponent
             glyph="download"
             textId="widgets.widget.menu.downloadData"
-            onClick={() => onClick({
-                // ...layer
-                url: layer.search?.url || layer.url,
-                name: layer.name,
-                id: getLayerId(layer)
-            })}
+            onClick={() => onClick({...layer, widgetId})}
         />
     );
 });
@@ -167,14 +163,14 @@ const LayerDownloadMenu = connect(null, {
  */
 const LayerDownloadPlugin = createPlugin('LayerDownload', {
     component: connect(createStructuredSelector({
-        url: wfsURL,
         filterObj: wfsFilterSelector,
         enabled: layerDonwloadControlEnabledSelector,
         downloadOptions: downloadOptionsSelector,
         loading: loadingSelector,
         wfsFormats: wfsFormatsSelector,
         formatsLoading: formatsLoadingSelector,
-        layer: getSelectedLayer,
+        mapLayer: getSelectedLayer,
+        downloadLayer: downloadLayerSelector,
         wpsAvailable: wpsAvailableSelector,
         service: serviceSelector,
         checkingWPSAvailability: checkingWPSAvailabilitySelector,

@@ -66,14 +66,16 @@ const DownloadDialog = ({
     formats,
     srsList,
     defaultSrs,
-    layer,
-    url,
+    mapLayer,
+    downloadLayer,
     formatsLoading,
     virtualScroll,
     customAttributeSettings,
     attributes,
     hideServiceSelector
 }) => {
+
+    const selectedLayer = mapLayer || downloadLayer || {};
 
     const [showLoader, setShowLoader] = useState(false);
     // const [loadedLayer, setLoadedLayer] = useState(layer);
@@ -115,14 +117,14 @@ const DownloadDialog = ({
         if (enabled) {
             onClearDownloadOptions();
 
-            if (layer.type === 'wms') {
+            if (selectedLayer.type === 'wms') {
                 // condition added only after this review:
                 // https://github.com/geosolutions-it/MapStore2/pull/6204/commits/7dfb575983cea4d5a3c36de5cdfb19a0141bd74d
                 //
-                checkWPSAvailability(url || layer, defaultSelectedService);
+                checkWPSAvailability(selectedLayer, defaultSelectedService);
             }
         }
-    }, [enabled, url, layer, defaultSelectedService]); // equivalent componentDidUpdate
+    }, [enabled, selectedLayer, defaultSelectedService]); // equivalent componentDidUpdate
 
     const renderIcon = () => {
         return loading ? <div style={{"float": "left"}}><Spinner spinnerName="circle" noFadeIn/></div> : <Glyphicon glyph="download" />;
@@ -131,18 +133,18 @@ const DownloadDialog = ({
     const handleExport = () => {
         const selectedSrs = downloadOptions && downloadOptions.selectedSrs || defaultSrs || (srsList[0] || {}).name;
         const propertyName = getAttributesList(attributes, customAttributeSettings);
-        onExport(url || layer.url, filterObj, assign({}, downloadOptions, {selectedSrs}, {propertyName}));
+        onExport(selectedLayer?.url, filterObj, assign({}, downloadOptions, {selectedSrs}, {propertyName}));
     };
 
     const findValidFormats  = fmt => formats.filter(({validServices, type = 'vector'}) =>
         (!validServices || findIndex(validServices, x => x === fmt) > -1) &&
-            (type === 'vector' && layer.search?.url || type === 'raster' && !layer.search?.url));
+            (type === 'vector' && selectedLayer?.search?.url || type === 'raster' && !selectedLayer?.search?.url));
     const validWFSFormats = findValidFormats('wfs');
     const validWPSFormats = findValidFormats('wps');
     const wfsFormatsList = validWFSFormats.length > 0 ?
         validWFSFormats.filter(f => wfsFormats.find(wfsF => wfsF.name.toLowerCase() === f.name.toLowerCase())) :
         wfsFormats;
-    const wfsAvailable = Boolean(layer.search?.url);
+    const wfsAvailable = Boolean(selectedLayer?.search?.url);
 
     const formatsAvailable = service === 'wfs' ? wfsFormatsList : validWPSFormats;
 
@@ -171,9 +173,9 @@ const DownloadDialog = ({
                             formats={formatsAvailable}
                             srsList={srsList}
                             defaultSrs={defaultSrs}
-                            wpsAdvancedOptionsVisible={!layer.search?.url}
-                            downloadFilteredVisible={!!layer.search?.url}
-                            layer={layer}
+                            wpsAdvancedOptionsVisible={!selectedLayer?.search?.url}
+                            downloadFilteredVisible={!!selectedLayer?.search?.url}
+                            layer={selectedLayer}
                             virtualScroll={virtualScroll}
                             customAttributesSettings={customAttributeSettings}
                             attributes={attributes}
@@ -195,34 +197,34 @@ const DownloadDialog = ({
 };
 
 DownloadDialog.propTypes = {
-    filterObj: PropTypes.object,
-    closeGlyph: PropTypes.string,
-    url: PropTypes.string,
-    wpsAvailable: PropTypes.bool,
-    service: PropTypes.string,
-    defaultSelectedService: PropTypes.string,
-    enabled: PropTypes.bool,
-    loading: PropTypes.bool,
+    attributes: PropTypes.array,
     checkingWPSAvailability: PropTypes.bool,
-    onClose: PropTypes.func,
-    onExport: PropTypes.func,
+    closeGlyph: PropTypes.string,
+    customAttributeSettings: PropTypes.object,
+    defaultSelectedService: PropTypes.string,
+    defaultSrs: PropTypes.string,
+    downloadOptions: PropTypes.object,
+    enabled: PropTypes.bool,
+    filterObj: PropTypes.object,
+    formats: PropTypes.array,
+    formatsLoading: PropTypes.bool,
+    hideServiceSelector: PropTypes.bool,
+    mapLayer: PropTypes.object,
+    downloadLayer: PropTypes.object,
+    loading: PropTypes.bool,
     onCheckWPSAvailability: PropTypes.func,
+    onClearDownloadOptions: PropTypes.func,
+    onClose: PropTypes.func,
+    onDownloadOptionChange: PropTypes.func,
+    onExport: PropTypes.func,
+    onFormatOptionsFetch: PropTypes.func,
     onSetService: PropTypes.func,
     onSetWPSAvailability: PropTypes.func,
-    onDownloadOptionChange: PropTypes.func,
-    onClearDownloadOptions: PropTypes.func,
-    onFormatOptionsFetch: PropTypes.func,
-    downloadOptions: PropTypes.object,
-    wfsFormats: PropTypes.array,
-    formats: PropTypes.array,
+    service: PropTypes.string,
     srsList: PropTypes.array,
-    defaultSrs: PropTypes.string,
-    layer: PropTypes.object,
-    formatsLoading: PropTypes.bool,
     virtualScroll: PropTypes.bool,
-    customAttributeSettings: PropTypes.object,
-    attributes: PropTypes.array,
-    hideServiceSelector: PropTypes.bool
+    wfsFormats: PropTypes.array,
+    wpsAvailable: PropTypes.bool
 };
 
 DownloadDialog.defaultProps = {
@@ -235,7 +237,6 @@ DownloadDialog.defaultProps = {
     onClearDownloadOptions: () => {},
     onFormatOptionsFetch: () => {},
     checkingWPSAvailability: false,
-    layer: {},
     closeGlyph: "1-close",
     wpsAvailable: false,
     service: 'wfs',

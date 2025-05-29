@@ -7,7 +7,7 @@
  */
 
 import Rx from 'rxjs';
-import { get, find, findIndex, pick, toPairs, castArray } from 'lodash';
+import { get, isNil, find, pick, toPairs, castArray } from 'lodash';
 import { saveAs } from 'file-saver';
 // import { parseString } from 'xml2js';
 // import { stripPrefix } from 'xml2js/lib/processors';
@@ -52,7 +52,7 @@ import {
     MAP_CONFIG_LOADED
 } from '../actions/config';
 
-import { serviceSelector, exportDataResultsSelector } from '../selectors/layerdownload';
+import { serviceSelector, exportDataResultsSelector, downloadLayerSelector } from '../selectors/layerdownload';
 import { queryPanelSelector, wfsDownloadSelector } from '../selectors/controls';
 import { getSelectedLayer } from '../selectors/layers';
 import { currentLocaleSelector } from '../selectors/locale';
@@ -126,7 +126,7 @@ const getWFSFeature = ({ url, filterObj = {}, layerFilter, layer, downloadOption
 };
 
 const getFileName = action => {
-    const name = get(action, "filterObj.featureTypeName");
+    const name = get(action, "filterObj.featureTypeName") || "suca";
     const format = getByOutputFormat(get(action, "downloadOptions.selectedFormat"));
     if (format && format.extension) {
         return name + "." + format.extension;
@@ -249,7 +249,11 @@ export const startFeatureExportDownload = (action$, store) =>
         const state = store.getState();
         const {virtualScroll = false} = state.featuregrid || {};
         const service = serviceSelector(state);
-        const layer = getSelectedLayer(state);
+
+        const mapLayer = getSelectedLayer(state);
+        const downloadLayer = downloadLayerSelector(state);
+        const layer = mapLayer || downloadLayer;
+
         const mapBbox = mapBboxSelector(state);
         const currentLocale = currentLocaleSelector(state);
         const propertyNames = action.downloadOptions.propertyName ? [
@@ -262,7 +266,7 @@ export const startFeatureExportDownload = (action$, store) =>
         const wfsFlow = () => getWFSFeature({
             url: action.url,
             downloadOptions: action.downloadOptions,
-            filterObj: action.filterObj,
+            filterObj: isNil(action.filterObj) ? {} : action.filterObj,
             layer,
             layerFilter,
             options: {
@@ -279,6 +283,7 @@ export const startFeatureExportDownload = (action$, store) =>
                 }
             })
             .catch(() => {
+                // check here
                 return getWFSFeature({
                     url: action.url,
                     downloadOptions: action.downloadOptions,
