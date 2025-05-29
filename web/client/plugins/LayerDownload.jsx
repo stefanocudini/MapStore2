@@ -93,11 +93,16 @@ const LayerDownloadMenu = connect(null, {
 }) => {
     const ItemComponent = itemComponent;
 
+
+    // PROBLEMA nello stato di widgetBuilder.js si perde lo stato del layer selezionato e qui arriva undefined
+
+
     return (
         <ItemComponent
             glyph="download"
             textId="widgets.widget.menu.downloadData"
             onClick={() => onClick({
+                // ...layer
                 url: layer.search?.url || layer.url,
                 name: layer.name,
                 id: getLayerId(layer)
@@ -187,7 +192,7 @@ const LayerDownloadPlugin = createPlugin('LayerDownload', {
         onClose: () => toggleControl("layerdownload")
     })(DownloadDialog),
     containers: {
-        Widgets: {   // /usanto anche viewer map
+        Widgets: {
             doNotHide: true,
             name: "LayerDownload",
             target: "table-menu-download",

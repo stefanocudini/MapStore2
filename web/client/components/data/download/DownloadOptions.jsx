@@ -34,7 +34,7 @@ class DownloadOptions extends React.Component {
         formatOptionsFetch: PropTypes.func,
         formats: PropTypes.array,
         srsList: PropTypes.array,
-        setService: PropTypes.func,
+        onSetService: PropTypes.func,
         onChange: PropTypes.func,
         defaultSrs: PropTypes.string,
         wpsOptionsVisible: PropTypes.bool,
@@ -95,7 +95,7 @@ class DownloadOptions extends React.Component {
                         <Select
                             clearable={false}
                             value={this.props.service}
-                            onChange={(sel) => this.props.setService(sel.value)}
+                            onChange={(sel) => this.props.onSetService(sel.value)}
                             options={this.props.services} />
                             &nbsp;<InfoPopover text={<Message msgId={`layerdownload.services.${this.props.service}.tooltip`} />} />
                     </div>

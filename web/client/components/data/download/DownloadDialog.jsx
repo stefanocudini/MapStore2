@@ -50,7 +50,7 @@ const DownloadDialog = ({
     closeGlyph,
     wpsAvailable,
     service,
-    defaultSelectedService,
+    defaultSelectedService, // per node
     enabled,
     loading,
     checkingWPSAvailability,
@@ -75,12 +75,13 @@ const DownloadDialog = ({
     hideServiceSelector
 }) => {
 
-    const [showLoader, setShowLoader] = useState(true);
+    const [showLoader, setShowLoader] = useState(false);
+    // const [loadedLayer, setLoadedLayer] = useState(layer);
 
     const checkWPSAvailability = (layerToCheck, selectedService) => {
         setShowLoader(true);
 
-        return describeProcess(layerToCheck.url, 'gs:DownloadEstimator,gs:Download')
+        describeProcess(layerToCheck.url, 'gs:DownloadEstimator,gs:Download')
             .toPromise()
             .then((response) => // xml to obj
                 new Promise((resolve, reject) => parseString(response.data, { tagNameProcessors: [stripPrefix] }, (err, res) => (err ? reject(err) : resolve(res))))
@@ -113,8 +114,12 @@ const DownloadDialog = ({
     useEffect(() => {
         if (enabled) {
             onClearDownloadOptions();
+
             if (layer.type === 'wms') {
-                checkWPSAvailability(layer, defaultSelectedService);
+                // condition added only after this review:
+                // https://github.com/geosolutions-it/MapStore2/pull/6204/commits/7dfb575983cea4d5a3c36de5cdfb19a0141bd74d
+                //
+                checkWPSAvailability(url || layer, defaultSelectedService);
             }
         }
     }, [enabled, url, layer, defaultSelectedService]); // equivalent componentDidUpdate
@@ -151,7 +156,9 @@ const DownloadDialog = ({
                 {showLoader ?
                     <Loader size={100} style={{margin: '0 auto'}}/> :
                     !wpsAvailable && !wfsAvailable ?
+
                         <EmptyView title={<Message msgId="layerdownload.noSupportedServiceFound"/>}/> :
+
                         <DownloadOptions
                             wpsAvailable={wpsAvailable}
                             wfsAvailable={wfsAvailable}
