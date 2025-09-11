@@ -88,7 +88,7 @@ import {reprojectGeoJson, reproject} from "../utils/CoordinatesUtils";
 import {selectLineFeature} from "../utils/LongitudinalProfileUtils";
 import {buildIdentifyRequest} from "../utils/MapInfoUtils";
 import {getFeatureInfo} from "../api/identify";
-import { drawerOwnerSelector } from "../selectors/draw";
+import { drawerOwnerSelector, drawSupportActiveSelector } from "../selectors/draw";
 import { DEFAULT_PANEL_WIDTH } from '../utils/LayoutUtils';
 
 const OFFSET = DEFAULT_PANEL_WIDTH;
@@ -182,7 +182,7 @@ export const LPonChartPropsChangeEpic = (action$, store) =>
             const geometry = geometrySelector(state);
             const identifier = configSelector(state)?.identifier;
             const wpsurl = configSelector(state)?.wpsurl;
-            const referential = configSelector(state)?.referential;
+            const referential = configSelector(state)?.referential || configSelector(state)?.defaultReferentialName;
             const distance = configSelector(state)?.distance;
             const wpsBody = profileEnLong({identifier, geometry, distance, referential });
             const noDataThreshold = noDataThresholdSelector(state);
@@ -416,7 +416,7 @@ export const LPdeactivateIdentifyEnabledEpic = (action$, store) =>
 export const LPclickToProfileEpic = (action$, {getState}) =>
     action$
         .ofType(CLICK_ON_MAP)
-        .filter(() => isListeningClickSelector(getState()))
+        .filter(() => isListeningClickSelector(getState()) && !drawSupportActiveSelector(getState()))
         .switchMap(({point}) => {
             const state = getState();
             const map = mapSelector(state);
