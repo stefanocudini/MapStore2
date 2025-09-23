@@ -9,9 +9,17 @@
 import Rx from 'rxjs';
 
 import { SELECT_NODE } from '../actions/layers';
-import { setActive } from '../actions/swipe';
+import {
+    setActive,
+    setMode,
+    setSwipeSliderOps,
+    setSwipeLayer
+} from '../actions/swipe';
+
 import { LOCATION_CHANGE } from 'connected-react-router';
 import { layerSwipeSettingsSelector } from '../selectors/swipe';
+
+// import { LOAD_NEW_MAP } from '../actions/config';
 
 /**
  * Ensures that swipeSettings active is changed back to false when a layer is deselected in TOC or group is selected
@@ -35,9 +43,20 @@ export const deactivateSwipeToolOnSwitchMaps = (action$, store) =>
         .switchMap(() => {
             const swipeSettings = layerSwipeSettingsSelector(store.getState());
             return swipeSettings.active
-                ? Rx.Observable.of(setActive(false))
+                ? Rx.Observable.of(setActive(false), setSwipeSliderOps({}), setMode(null), setSwipeLayer(null))
                 : Rx.Observable.empty();
         });
+
+// TODO new epic for resetting swipe on new map(may be unnecessary)
+// export const resetSwipeToolOnNewMap = (action$, store) =>
+//     action$.ofType(LOAD_NEW_MAP)
+//         .switchMap(() => {
+//             const swipeSettings = layerSwipeSettingsSelector(store.getState());
+//             return swipeSettings.active
+//                 ? Rx.Observable.of(setActive(false), setSwipeSliderOps({}), setMode(null), setSwipeLayer(null))
+//                 : Rx.Observable.empty();
+//         });
+
 
 /**
  * Deactivates the swipe tool when maps are switched
@@ -48,4 +67,5 @@ export const deactivateSwipeToolOnSwitchMaps = (action$, store) =>
 export default {
     resetLayerSwipeSettingsEpic,
     deactivateSwipeToolOnSwitchMaps
+    // resetSwipeToolOnNewMap
 };

@@ -115,7 +115,7 @@ function SaveAs({
         return null;
     }
 
-    const hideIndicator = !!resourceInfo?.resource?.canEdit;
+    const hideIndicator = !!resourceInfo?.resource?.canEdit || !loading;
 
     const messagePrefix = resourceInfo?.initialResource?.id === undefined
         ? 'createNewResource'
