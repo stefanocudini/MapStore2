@@ -43,7 +43,7 @@ export const deactivateSwipeToolOnSwitchMaps = (action$, store) =>
         .switchMap(() => {
             const swipeSettings = layerSwipeSettingsSelector(store.getState());
             return swipeSettings.active
-                ? Rx.Observable.of(setActive(false), setSwipeSliderOps({}), setMode(null), setSwipeLayer(null))
+                ? Rx.Observable.of(setActive(false))// , setSwipeSliderOps({}), setMode(null), setSwipeLayer(null))
                 : Rx.Observable.empty();
         });
 

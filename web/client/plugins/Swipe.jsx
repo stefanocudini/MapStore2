@@ -6,7 +6,7 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 
@@ -28,12 +28,28 @@ import SpyGlassSupport from '../components/map/openlayers/swipe/SpyGlassSupport'
 import SwipeButton from './swipe/SwipeButton';
 
 
-export const Support = ({ mode, map, layer, active, swipeModeSettings, spyModeSettings, swipeSliderOptions, onSetSwipeSliderOptions }) => {
+export const Support = ({ mode, map, layer, active,
+    onSetSwipeActive, onSetSwipeMode, onSetSwipeLayer, onSetSwipeSliderOptions,
+    swipeModeSettings, spyModeSettings, swipeSliderOptions }) => {
+    useEffect(() => {
+        return () => {
+            onSetSwipeActive(false);
+            onSetSwipeMode(null);
+            onSetSwipeLayer(null);
+            onSetSwipeSliderOptions(null);
+        };
+    }, []);
+
     if (mode === "spy") {
         return <SpyGlassSupport map={map} layer={layer} active={active} radius={spyModeSettings.radius} />;
     }
-    return <SliderSwipeSupport map={map} layer={layer} active={active} type={swipeModeSettings.direction} swipeSliderOptions={swipeSliderOptions} onSetSwipeSliderOptions={onSetSwipeSliderOptions} />;
+    return (<SliderSwipeSupport map={map} layer={layer} active={active} type={swipeModeSettings.direction} swipeSliderOptions={swipeSliderOptions}
+        onSetSwipeActive={onSetSwipeActive}
+        onSetSwipeMode={onSetSwipeMode}
+        onSetSwipeLayer={onSetSwipeLayer}
+        onSetSwipeSliderOptions={onSetSwipeSliderOptions} />);
 };
+
 
 const swipeSupportSelector = createSelector([
     getSwipeLayerId,
@@ -51,6 +67,9 @@ const swipeSupportSelector = createSelector([
 }));
 
 const MapSwipeSupport = connect(swipeSupportSelector, {
+    onSetSwipeActive: setActive,
+    onSetSwipeMode: setMode,
+    onSetSwipeLayer: setSwipeLayer,
     onSetSwipeSliderOptions: setSwipeSliderOps
 })(Support);
 
@@ -78,14 +97,15 @@ export default createPlugin(
                     {
                         onSetActive: setActive,
                         onSetSwipeMode: setMode,
-                        onSetSwipeLayer: setSwipeLayer
+                        onSetSwipeLayer: setSwipeLayer,
+                        onSetSwipeSliderOptions: setSwipeSliderOps
                     }
                 )(SwipeButton),
                 position: 13
             }, {
                 name: "Swipe",
                 target: "node-tool",
-                Component: connect(tocToolsSelector, { onSetActive: setActive })(({
+                Component: connect(tocToolsSelector, { onSetActive: setActive, onSetSwipeMode: setMode, onSetSwipeLayer: setSwipeLayer, onSetSwipeSliderOptions: setSwipeSliderOps })(({
                     itemComponent,
                     node,
                     swipeLayerId,
