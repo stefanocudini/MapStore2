@@ -37,6 +37,7 @@ export const TOGGLE_SETTING = "GEOSTORY:TOGGLE_SETTING";
 export const TOGGLE_CONTENT_FOCUS = "GEOSTORY:TOGGLE_CONTENT_FOCUS";
 export const UPDATE = "GEOSTORY:UPDATE";
 export const UPDATE_SETTING = "GEOSTORY:UPDATE_SETTING";
+export const UPDATE_SERVICES = "GEOSTORY:UPDATE_SERVICES";
 export const UPDATE_CURRENT_PAGE = "GEOSTORY:UPDATE_CURRENT_PAGE";
 export const REMOVE_RESOURCE = "GEOSTORY:REMOVE_RESOURCE";
 export const SET_PENDING_CHANGES = "GEOSTORY:SET_PENDING_CHANGES";
@@ -47,6 +48,7 @@ export const ENABLE_DRAW = "GEOSTORY:ENABLE_DRAW";
 export const GEOSTORY_EXPORT = "GEOSTORY:EXPORT";
 export const GEOSTORY_IMPORT = "GEOSTORY:IMPORT";
 export const RESET_GEOSTORY = "GEOSTORY:RESET";
+
 
 /**
  * Adds an entry to current story. The entry can be a section, a content or anything to append in an array (even sub-content)
@@ -276,3 +278,10 @@ export const geostoryImport = (file) => ({type: GEOSTORY_IMPORT, file});
  * reset geostory on page unmount
  */
 export const resetGeostory = () => ({ type: RESET_GEOSTORY });
+
+
+/**
+ * @param {object} services the object with geostory catalog services
+*/
+
+export const geostoryUpdateServices = services => ({ type: UPDATE_SERVICES, services});

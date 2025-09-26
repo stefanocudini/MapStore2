@@ -57,6 +57,7 @@ import {
     EDIT_RESOURCE,
     UPDATE_CURRENT_PAGE,
     UPDATE_SETTING,
+    geostoryUpdateServices,
     SET_CURRENT_STORY,
     geostoryScrolling,
     GEOSTORY_SCROLLING,
@@ -224,6 +225,7 @@ export const editWebPageComponent = action$ =>
                 .merge(action$.let(updateWebPageSection(path)))
                 .takeUntil(action$.ofType(ADD));
         });
+
 /**
  * Epic that handles the save story workflow. It uses persistence
  * @param {Observable} action$ stream of redux action
@@ -513,12 +515,27 @@ export const inlineEditorEditMap = (action$, {getState}) =>
         .switchMap(() => {
             return action$.ofType(SAVE_MAP_EDITOR)
             .switchMap(({map}) => {
-                const {path} = getFocusedContentSelector(getState());
+                const store = getState();
+                const {path} = getFocusedContentSelector(store);
                 return  Observable.of(update(`${path}.map`, map, 'merge'), update(`${path}.editMap`, false), hideMapEditor())
                         .takeUntil(action$.ofType(HIDE_MAP_EDITOR));
             });
         });
 
+export const geostoryMediaEditorEditMap = (action$, {getState}) =>
+    action$.ofType(SAVE_MAP_EDITOR)
+        .filter(({owner, map}) => owner === 'mediaEditor' && !!map)
+            .switchMap(({map}) => {
+                const store = getState();
+                const {path} = getFocusedContentSelector(store);
+                const newMap = {
+                    ...map,
+                    catalogServices: {
+                        services: get(store, 'catalog.services')
+                    }
+                };
+                return Observable.of(update(`${path}.map`, newMap, 'merge'));
+            });
 
 export const closeShareOnGeostoryChangeMode = action$ =>
     action$.ofType(CHANGE_MODE)

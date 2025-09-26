@@ -35,6 +35,7 @@ import {
     TOGGLE_SETTINGS_PANEL,
     UPDATE,
     UPDATE_CURRENT_PAGE,
+    UPDATE_SERVICES,
     UPDATE_SETTING,
     REMOVE_RESOURCE,
     SET_PENDING_CHANGES,
@@ -45,7 +46,6 @@ import {
     RESET_GEOSTORY
 } from '../actions/geostory';
 import { REFRESH_SECURITY_LAYERS, CLEAR_SECURITY } from "../actions/security";
-
 
 /**
  * Return the index of the where to place an item.
@@ -114,25 +114,28 @@ let INITIAL_STATE = {
  *
  * @example
  * {
- *     "mode": "edit", // 'edit' or 'view',
+ *     "mode": "edit",            // 'edit' or 'view',
  *     "defaultSettings": {
  *       "isLogoEnabled": false,
  *       "isTitleEnabled": false,
  *       "isNavbarEnabled": false
  *     },
  *     "currentStory": {
- *      "resources": [] // resources (media) of the story
- *     // sections
- *     "sections": [
+ *      "resources": []           // resources (media) of the story
+ *      "catalogServices": {      //catalog services open in map editor
+ *         "services": {},
+ *         "selectedService": ""
+ *      },
+ *     "sections": [              // sections of the geostory
  *       {
- *         "type": "paragraph", // each session has a type
+ *         "type": "paragraph",   // each session has a type
  *         "id": "SomeID",
  *         "title": "Abstract",
  *         // depending on the type, session can have one or more contents
  *         "contents": [
  *           {
  *             "id": "SomeID",
- *             "type": "text", // each content must have a type
+ *             "type": "text",   // each content must have a type
  *             "background": {}, // and each content can have a background
  *             "html": "<p>this is some html content</p>"
  *           }
@@ -326,6 +329,9 @@ export default (state = INITIAL_STATE, action) => {
     }
     case UPDATE_SETTING: {
         return set(`currentStory.settings.${action.prop}`, action.value, state);
+    }
+    case UPDATE_SERVICES: {
+        return set('currentStory.catalogServices.services', action.services, state);
     }
     case UPDATE_CURRENT_PAGE: {
         /* if the page update updates a column, update state only if the column for the current immersive section has changed.
