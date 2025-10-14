@@ -59,12 +59,30 @@
     }
   ],
   "monitorState": [
-    { "name": "router", "path": "router.location.pathname" },
-    { "name": "browser", "path": "browser" },
-    { "name": "geostorymode", "path": "geostory.mode" },
-    { "name": "featuregridmode", "path": "featuregrid.mode" },
-    { "name": "userrole", "path": "security.user.role" },
-    { "name": "printEnabled", "path": "print.capabilities" },
+    {
+      "name": "router",
+      "path": "router.location.pathname"
+    },
+    {
+      "name": "browser",
+      "path": "browser"
+    },
+    {
+      "name": "geostorymode",
+      "path": "geostory.mode"
+    },
+    {
+      "name": "featuregridmode",
+      "path": "featuregrid.mode"
+    },
+    {
+      "name": "userrole",
+      "path": "security.user.role"
+    },
+    {
+      "name": "printEnabled",
+      "path": "print.capabilities"
+    },
     {
       "name": "resourceCanEdit",
       "path": "resources.initialSelectedResource.canEdit"
@@ -278,7 +296,9 @@
   },
   "plugins": {
     "mobile": [
-      { "name": "SecurityPopup" },
+      {
+        "name": "SecurityPopup"
+      },
       {
         "name": "Map",
         "cfg": {
@@ -302,7 +322,9 @@
       "BackgroundSelector",
       {
         "name": "Identify",
-        "showIn": ["Settings"],
+        "showIn": [
+          "Settings"
+        ],
         "cfg": {
           "showFullscreen": true,
           "position": "bottom",
@@ -354,7 +376,10 @@
         "name": "Search",
         "cfg": {
           "showOptions": false,
-          "withToggle": ["max-width: 768px", "min-width: 768px"]
+          "withToggle": [
+            "max-width: 768px",
+            "min-width: 768px"
+          ]
         }
       },
       {
@@ -394,10 +419,25 @@
         }
       },
       "FeedbackMask",
-      { "name": "Widgets" },
-      { "name": "WidgetsTray" }
+      {
+        "name": "Widgets"
+      },
+      {
+        "name": "WidgetsTray"
+      }
     ],
     "desktop": [
+      {
+        "name": "GeoProcessing",
+        "cfg": {
+          "wpsUrl": "https://gs-stable.geo-solutions.it/geoserver/wps",
+          "selectedTool": "buffer",
+          "buffer": {
+            "quadrantSegments": 200,
+            "capStyle": "Round"
+          }
+        }
+      },
       "Details",
       {
         "name": "BrandNavbar",
@@ -405,7 +445,9 @@
           "containerPosition": "header"
         }
       },
-      { "name": "SecurityPopup" },
+      {
+        "name": "SecurityPopup"
+      },
       {
         "name": "Map",
         "cfg": {
@@ -500,12 +542,18 @@
               "id": "Viewport",
               "name": "queryform.spatialfilter.methods.viewport"
             },
-            { "id": "BBOX", "name": "queryform.spatialfilter.methods.box" },
+            {
+              "id": "BBOX",
+              "name": "queryform.spatialfilter.methods.box"
+            },
             {
               "id": "Circle",
               "name": "queryform.spatialfilter.methods.circle"
             },
-            { "id": "Polygon", "name": "queryform.spatialfilter.methods.poly" }
+            {
+              "id": "Polygon",
+              "name": "queryform.spatialfilter.methods.poly"
+            }
           ]
         }
       },
@@ -564,7 +612,10 @@
           "editCRS": true,
           "showLabels": true,
           "showToggle": true,
-          "filterAllowedCRS": ["EPSG:4326", "EPSG:3857"],
+          "filterAllowedCRS": [
+            "EPSG:4326",
+            "EPSG:3857"
+          ],
           "additionalCRS": {}
         }
       },
@@ -572,14 +623,22 @@
         "name": "CRSSelector",
         "cfg": {
           "additionalCRS": {},
-          "filterAllowedCRS": ["EPSG:4326", "EPSG:3857"],
-          "allowedRoles": ["ADMIN"]
+          "filterAllowedCRS": [
+            "EPSG:4326",
+            "EPSG:3857"
+          ],
+          "allowedRoles": [
+            "ADMIN"
+          ]
         }
       },
       {
         "name": "Search",
         "cfg": {
-          "withToggle": ["max-width: 768px", "min-width: 768px"]
+          "withToggle": [
+            "max-width: 768px",
+            "min-width: 768px"
+          ]
         }
       },
       {
@@ -631,12 +690,30 @@
       },
       "OmniBar",
       "Login",
-      { "name": "ResourceDetails", "cfg": { "resourceType": "MAP" } },
-      { "name": "Save", "cfg": { "resourceType": "MAP" } },
-      { "name": "SaveAs", "cfg": { "resourceType": "MAP" } },
+      {
+        "name": "ResourceDetails",
+        "cfg": {
+          "resourceType": "MAP"
+        }
+      },
+      {
+        "name": "Save",
+        "cfg": {
+          "resourceType": "MAP"
+        }
+      },
+      {
+        "name": "SaveAs",
+        "cfg": {
+          "resourceType": "MAP"
+        }
+      },
       {
         "name": "DeleteResource",
-        "cfg": { "resourceType": "MAP", "redirectTo": "/" }
+        "cfg": {
+          "resourceType": "MAP",
+          "redirectTo": "/"
+        }
       },
       "Expander",
       "Undo",
@@ -660,7 +737,9 @@
       "FeedbackMask",
       "StyleEditor",
       "SidebarMenu",
-      { "name": "MapViews" },
+      {
+        "name": "MapViews"
+      },
       {
         "name": "Language"
       }
@@ -806,8 +885,12 @@
       "Notifications"
     ],
     "maps": [
-      { "name": "HomeDescription" },
-      { "name": "ResourcesSearch" },
+      {
+        "name": "HomeDescription"
+      },
+      {
+        "name": "ResourcesSearch"
+      },
       {
         "name": "ResourcesGrid",
         "cfg": {
@@ -867,7 +950,9 @@
           ]
         }
       },
-      { "name": "Favorites" },
+      {
+        "name": "Favorites"
+      },
       {
         "name": "ResourcesFiltersForm",
         "cfg": {
@@ -923,8 +1008,12 @@
           }
         }
       },
-      { "name": "Footer" },
-      { "name": "About" },
+      {
+        "name": "Footer"
+      },
+      {
+        "name": "About"
+      },
       {
         "name": "Cookie",
         "cfg": {
@@ -933,7 +1022,10 @@
         }
       }
     ],
-    "permalink": ["Permalink", "FeedbackMask"],
+    "permalink": [
+      "Permalink",
+      "FeedbackMask"
+    ],
     "dashboard": [
       {
         "name": "LayerDownload",
@@ -941,11 +1033,28 @@
           "cropDataSetVisible": false
         }
       },
-      { "name": "ResourceDetails", "cfg": { "resourceType": "DASHBOARD" } },
-      { "name": "Save", "cfg": { "resourceType": "DASHBOARD" } },
-      { "name": "SaveAs", "cfg": { "resourceType": "DASHBOARD" } },
+      {
+        "name": "ResourceDetails",
+        "cfg": {
+          "resourceType": "DASHBOARD"
+        }
+      },
+      {
+        "name": "Save",
+        "cfg": {
+          "resourceType": "DASHBOARD"
+        }
+      },
+      {
+        "name": "SaveAs",
+        "cfg": {
+          "resourceType": "DASHBOARD"
+        }
+      },
       "Details",
-      { "name": "SecurityPopup" },
+      {
+        "name": "SecurityPopup"
+      },
       "AddWidgetDashboard",
       "MapConnectionDashboard",
       {
@@ -983,10 +1092,17 @@
       },
       {
         "name": "DeleteResource",
-        "cfg": { "resourceType": "DASHBOARD", "redirectTo": "/" }
+        "cfg": {
+          "resourceType": "DASHBOARD",
+          "redirectTo": "/"
+        }
       },
-      { "name": "DashboardExport" },
-      { "name": "DashboardImport" },
+      {
+        "name": "DashboardExport"
+      },
+      {
+        "name": "DashboardImport"
+      },
       {
         "name": "BrandNavbar",
         "cfg": {
@@ -1005,10 +1121,22 @@
             "showConnectionsParamToggle": true,
             "allowFullScreen": false,
             "sizeOptions": {
-              "Small": { "width": 600, "height": 500 },
-              "Medium": { "width": 800, "height": 600 },
-              "Large": { "width": 1000, "height": 800 },
-              "Custom": { "width": 0, "height": 0 }
+              "Small": {
+                "width": 600,
+                "height": 500
+              },
+              "Medium": {
+                "width": 800,
+                "height": 600
+              },
+              "Large": {
+                "width": 1000,
+                "height": 800
+              },
+              "Custom": {
+                "width": 0,
+                "height": 0
+              }
             },
             "selectedOption": "Small"
           }
@@ -1062,12 +1190,18 @@
             }
           ],
           "spatialMethodOptions": [
-            { "id": "BBOX", "name": "queryform.spatialfilter.methods.box" },
+            {
+              "id": "BBOX",
+              "name": "queryform.spatialfilter.methods.box"
+            },
             {
               "id": "Circle",
               "name": "queryform.spatialfilter.methods.circle"
             },
-            { "id": "Polygon", "name": "queryform.spatialfilter.methods.poly" }
+            {
+              "id": "Polygon",
+              "name": "queryform.spatialfilter.methods.poly"
+            }
           ],
           "containerPosition": "columns"
         }
@@ -1089,7 +1223,9 @@
     ],
     "geostory-embedded": [
       "GeoStory",
-      { "name": "SecurityPopup" },
+      {
+        "name": "SecurityPopup"
+      },
       {
         "name": "GeoStoryNavigation",
         "cfg": {
@@ -1110,17 +1246,36 @@
           "minLayoutWidth": 768
         }
       },
-      { "name": "SecurityPopup" },
-      { "name": "FeedbackMask" }
+      {
+        "name": "SecurityPopup"
+      },
+      {
+        "name": "FeedbackMask"
+      }
     ],
     "geostory": [
-      { "name": "SecurityPopup" },
+      {
+        "name": "SecurityPopup"
+      },
       {
         "name": "ResourceDetails",
-        "cfg": { "containerPosition": "columns", "resourceType": "GEOSTORY" }
+        "cfg": {
+          "containerPosition": "columns",
+          "resourceType": "GEOSTORY"
+        }
       },
-      { "name": "Save", "cfg": { "resourceType": "GEOSTORY" } },
-      { "name": "SaveAs", "cfg": { "resourceType": "GEOSTORY" } },
+      {
+        "name": "Save",
+        "cfg": {
+          "resourceType": "GEOSTORY"
+        }
+      },
+      {
+        "name": "SaveAs",
+        "cfg": {
+          "resourceType": "GEOSTORY"
+        }
+      },
       {
         "name": "BrandNavbar",
         "cfg": {
@@ -1151,10 +1306,17 @@
       },
       {
         "name": "DeleteResource",
-        "cfg": { "resourceType": "GEOSTORY", "redirectTo": "/" }
+        "cfg": {
+          "resourceType": "GEOSTORY",
+          "redirectTo": "/"
+        }
       },
-      { "name": "GeoStoryExport" },
-      { "name": "GeoStoryImport" },
+      {
+        "name": "GeoStoryExport"
+      },
+      {
+        "name": "GeoStoryImport"
+      },
       "MapEditor",
       "MediaEditor",
       {
@@ -1204,7 +1366,9 @@
           "containerPosition": "header"
         }
       },
-      { "name": "About" },
+      {
+        "name": "About"
+      },
       "Redirect",
       "Login",
       "Language",
@@ -1235,7 +1399,9 @@
       "GroupManager",
       "TagsManager",
       "Footer",
-      { "name": "About" }
+      {
+        "name": "About"
+      }
     ]
   }
 }

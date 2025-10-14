@@ -8,6 +8,9 @@
  */
 export const GPT_TOOL_BUFFER = "buffer";
 export const GPT_TOOL_INTERSECTION = "intersection";
+export const GPT_TOOL_REPROJECT = "reproject";
+export const GPT_TOOL_REPROJECT_GEOM = "reproject-geometry";
+
 export const GPT_CONTROL_NAME = "GeoProcessing";
 export const GPT_SOURCE_HIGHLIGHT_ID = "gpt-layer";
 export const GPT_INTERSECTION_HIGHLIGHT_ID = "gpt-layer-intersection";
@@ -47,6 +50,10 @@ export const SET_INTERSECTION_PERCENTAGES_ENABLED = "GPT:SET_INTERSECTION_PERCEN
 export const SET_INTERSECTION_AREAS_ENABLED = "GPT:SET_INTERSECTION_AREAS_ENABLED";
 export const SET_SELECTED_LAYER_TYPE = "GPT:SET_SELECTED_LAYER_TYPE";
 export const TOGGLE_HIGHLIGHT_LAYERS = "GPT:TOGGLE_HIGHLIGHT_LAYERS";
+
+export const SET_REPROJECT_SOURCE_CRS = "GPT:SET_REPROJECT_SOURCE_CRS";
+export const SET_REPROJECT_TARGET_CRS = "GPT:SET_REPROJECT_TARGET_CRS";
+export const SET_REPROJECT_GEOM = "GPT:SET_REPROJECT_GEOM"; // use input text coordinates
 
 /**
  * Actions for Geo Processing Tools
@@ -356,4 +363,19 @@ export const setSelectedLayerType = (source) => ({
   */
 export const toggleHighlightLayers = () => ({
     type: TOGGLE_HIGHLIGHT_LAYERS
+});
+
+export const setReprojectSourceCrs = (sourceCrs) => ({
+    type: SET_REPROJECT_SOURCE_CRS,
+    sourceCrs
+});
+
+export const setReprojectTargetCrs = (targetCrs) => ({
+    type: SET_REPROJECT_TARGET_CRS,
+    targetCrs
+});
+
+export const setReprojectGeom = (geom) => ({
+    type: SET_REPROJECT_GEOM,
+    geom
 });
