@@ -21,6 +21,8 @@ import vector from './mapinfo/vector';
 import threeDTiles from './mapinfo/threeDTiles';
 import model from './mapinfo/model';
 import arcgis from './mapinfo/arcgis';
+import cog from './mapinfo/cog';
+
 let MapInfoUtils;
 /**
  * Map of info modes which are used to display feature info data (identify tools).
@@ -372,7 +374,8 @@ export const services = {
     'vector': vector,
     '3dtiles': threeDTiles,
     'model': model,
-    'arcgis': arcgis
+    'arcgis': arcgis,
+    'cog': cog
 };
 /**
  * To get the custom viewer with the given type
