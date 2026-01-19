@@ -109,6 +109,24 @@ export const getLayerConfig = ({ url, layer, controller }) => {
         .catch(() => ({...layer}));
 };
 
+const LayersInstances = {};
+
+export const addLayerInstance = (id, layer, lib = 'ol') => {
+    // layer is OL,cesium layer instance
+    LayersInstances[`${lib}_${id}`] = layer;
+};
+
+export const getLayerInstance = (id, lib = 'ol') => {
+    if (!id) return null;
+    return LayersInstances[`${lib}_${id}`];
+}
+
+export const removeLayerInstance = (id, lib = 'ol') => {
+    delete LayersInstances[`${lib}_${id}`];
+    //TODO check is layer is destroyed in the respective map library
+};
+
+
 LayerUtils = {
     getProjectionFromGeoKeys,
     fromUrl,
@@ -116,3 +134,4 @@ LayerUtils = {
 };
 
 export default LayerUtils;
+
