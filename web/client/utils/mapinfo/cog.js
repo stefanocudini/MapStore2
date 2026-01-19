@@ -11,6 +11,7 @@ import isObject from 'lodash/isObject';
 
 import { getMapLibrary } from '../MapUtils';
 
+import { getLayerInstance } from '../cog/LayerUtils';
 
 function getLayerFromLayerNode(layerNode) {
     const map = getMapLibrary()?.map;
@@ -21,38 +22,55 @@ function getLayerFromLayerNode(layerNode) {
     );
 }
 
+//const features = [];
+
 export default {
-    buildRequest: function() {
-        console.log('COG mapinfo buildRequest not implemented yet', arguments);
-        return null;
+    buildRequest: (layer, { point, currentLocale, map } = {}) => {  // executed for each COG layer in TOC
+        const layerOl = getLayerInstance(layer.id, 'ol');
+
+        const pixelArr = [point?.pixel.x, point?.pixel.y];
+        const pickValue = layerOl.getData(pixelArr);
+
+        if(pickValue) {
+            console.log('COG buildRequest', layer.url, {layer, point, map, layerOl, pickValue});
+        }
+
+        const features = Array.isArray(pickValue)
+            ? pickValue.map((value, index) => ({
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [point.latlng.lng, point.latlng.lat]
+                },
+                properties: {
+                    value: value,
+                    band: index
+                }
+            })) : [];
+
+        return {
+            features: [...features],
+            request: {
+                features: [...features],
+                outputFormat: 'application/json',
+                // lat: point?.latlng?.lat,
+                // lng: point?.latlng?.lng
+            },
+            metadata: {
+                title: isObject(layer.title)
+                    ? layer.title[currentLocale] || layer.title.default
+                    : layer.title
+            },
+            url: 'client'
+        };
     },
-    // buildRequest: (layer, { point, currentLocale, map } = {}) => {
-    //     //const { features = [] } = point?.intersectedFeatures?.find(({ id }) => id === layer.id) || {};
-    //     const features = [];
+    getIdentifyFlow: (layer, basePath, { features = [], ...params } = {}) => {
 
-    //     const layerOl = getLayerFromLayerNode(layer);
-
-    //     console.log('mapinfo COG buildRequest', {layer, layerOl, point, map});
-    //     return {
-    //         request: {
-    //             features: [...features],
-    //             outputFormat: 'application/json'
-    //         },
-    //         metadata: {
-    //             title: isObject(layer.title)
-    //                 ? layer.title[currentLocale] || layer.title.default
-    //                 : layer.title
-    //         },
-    //         url: 'client'
-    //     };
-    // },
-    getIdentifyFlow: (layer, baseURL, { features = [] } = {}) => {
-
-        // console.log('mapinfo COG getIdentifyFlow', layer, baseURL, features);
+        console.log('COG getIdentifyFlow', layer.url, {layer, features, params});
 
         return Observable.of({
             data: {
-                features
+                features: [...features]
             }
         });
     }
