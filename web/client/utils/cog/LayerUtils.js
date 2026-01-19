@@ -111,19 +111,18 @@ export const getLayerConfig = ({ url, layer, controller }) => {
 
 const LayersInstances = {};
 
-export const addLayerInstance = (id, layer, lib = 'ol') => {
+export const addLayerInstance = (id, layer, lib = 'openlayers') => {
     // layer is OL,cesium layer instance
     LayersInstances[`${lib}_${id}`] = layer;
 };
 
-export const getLayerInstance = (id, lib = 'ol') => {
+export const getLayerInstance = (id, lib = 'openlayers') => {
     if (!id) return null;
     return LayersInstances[`${lib}_${id}`];
 }
 
-export const removeLayerInstance = (id, lib = 'ol') => {
+export const removeLayerInstance = (id, lib = 'openlayers') => {
     delete LayersInstances[`${lib}_${id}`];
-    //TODO check is layer is destroyed in the respective map library
 };
 
 
