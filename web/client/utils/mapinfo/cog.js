@@ -20,15 +20,14 @@ export default {
         const layerInstance = getLayerInstance(layer.id, libName);
 
         let pickValue = []
-        if(libName !== 'openlayers' || !layerInstance) {  //openlayers
+        if(libName === 'openlayers') {  //openlayers
             pickValue = layerInstance.getData([point?.pixel.x, point?.pixel.y]);
         }
-        else if(libName === 'cesium') {  //cesium
+        // else if(libName === 'cesium') {  //cesium
 
-            pickValue = layerInstance.pickFeatures(point?.pixel.x, point?.pixel.y, map.zoom, point?.latlng?.lat, point?.latlng?.lng);
-            console.log('COG pickValue from Cesium', pickValue);
-        }
-        return {}
+        //     pickValue = layerInstance.pickFeatures(point?.pixel.x, point?.pixel.y, map.zoom, point?.latlng?.lat, point?.latlng?.lng);
+        //     console.log('COG pickValue from Cesium', pickValue);
+        // }
 
         const arrayValues = pickValue ? Array.from(pickValue) : [];
 
