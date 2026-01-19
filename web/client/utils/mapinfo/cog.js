@@ -8,35 +8,17 @@
 
 import { Observable } from 'rxjs';
 import isObject from 'lodash/isObject';
-
-import { getMapLibrary } from '../MapUtils';
-
 import { getLayerInstance } from '../cog/LayerUtils';
-
-function getLayerFromLayerNode(layerNode) {
-    const map = getMapLibrary()?.map;
-    if (!map) return null;
-
-    return map.getLayers().getArray().find(l =>
-        l.get('id') === layerNode.id
-    );
-}
-
-//const features = [];
 
 export default {
     buildRequest: (layer, { point, currentLocale, map } = {}) => {  // executed for each COG layer in TOC
-        const layerOl = getLayerInstance(layer.id, 'ol');
 
+        const layerOl = getLayerInstance(layer.id, 'ol');
         const pixelArr = [point?.pixel.x, point?.pixel.y];
         const pickValue = layerOl.getData(pixelArr);
+        const arrayValues = pickValue ? Array.from(pickValue) : [];
 
-        if(pickValue) {
-            console.log('COG buildRequest', layer.url, {layer, point, map, layerOl, pickValue});
-        }
-
-        const features = Array.isArray(pickValue)
-            ? pickValue.map((value, index) => ({
+        const features = arrayValues.map((value, index) => ({
                 type: 'Feature',
                 geometry: {
                     type: 'Point',
@@ -46,37 +28,27 @@ export default {
                     value: value,
                     band: index
                 }
-            })) : [];
+            }));
 
         return {
-            features: [...features],
             request: {
                 features: [...features],
-                outputFormat: 'application/json',
-                // lat: point?.latlng?.lat,
-                // lng: point?.latlng?.lng
+                outputFormat: 'application/json'
             },
             metadata: {
                 title: isObject(layer.title)
                     ? layer.title[currentLocale] || layer.title.default
                     : layer.title
             },
-            url: 'client'
+            url: layer.url
         };
     },
-    getIdentifyFlow: (layer, basePath, { features = [], ...params } = {}) => {
+    getIdentifyFlow: (layer, basePath, {features = []} = {}) => {
 
-        console.log('COG getIdentifyFlow', layer.url, {layer, features, params});
-
-        // return Observable.of({
-        //     data: {
-        //         features: [...features]
-        //     }
-        // });
-        return Observable.defer(() => Promise.resolve({
+        return Observable.of({
             data: {
                 features: [...features]
             }
-        }));
+        });
     }
 };
