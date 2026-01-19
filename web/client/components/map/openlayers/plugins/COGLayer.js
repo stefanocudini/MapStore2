@@ -15,7 +15,7 @@ import TileLayer from 'ol/layer/WebGLTile.js';
 import { isProjectionAvailable } from '../../../../utils/ProjectionUtils';
 import { getRequestConfigurationByUrl } from '../../../../utils/SecurityUtils';
 
-import {addLayerInstance, getLayerInstance, removeLayerInstance} from '../../utils/cog/LayerUtils';
+import {addLayerInstance, getLayerInstance, removeLayerInstance} from '../../../../utils/cog/LayerUtils';
 
 function create(options) {
     let sourceOptions = {};
