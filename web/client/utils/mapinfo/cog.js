@@ -68,10 +68,15 @@ export default {
 
         console.log('COG getIdentifyFlow', layer.url, {layer, features, params});
 
-        return Observable.of({
+        // return Observable.of({
+        //     data: {
+        //         features: [...features]
+        //     }
+        // });
+        return Observable.defer(() => Promise.resolve({
             data: {
                 features: [...features]
             }
-        });
+        }));
     }
 };

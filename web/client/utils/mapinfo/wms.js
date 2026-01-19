@@ -97,6 +97,7 @@ export default {
      * @param {object} params for the request
      */
     getIdentifyFlow: (layer, basePath, params) => {
+        console.log('mapinfo WMS getIdentifyFlow', basePath, {params});
         return Observable.defer(() => axios.get(basePath, { params, _msAuthSourceId: layer?.security?.sourceId }))
             .let(interceptOGCError);
     }
