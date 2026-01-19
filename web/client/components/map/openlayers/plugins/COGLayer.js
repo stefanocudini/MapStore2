@@ -15,7 +15,7 @@ import TileLayer from 'ol/layer/WebGLTile.js';
 import { isProjectionAvailable } from '../../../../utils/ProjectionUtils';
 import { getRequestConfigurationByUrl } from '../../../../utils/SecurityUtils';
 
-import {addLayerInstance, getLayerInstance, removeLayerInstance} from '../../../../utils/cog/LayerUtils';
+import {addLayerInstance, removeLayerInstance} from '../../../../utils/cog/LayerUtils';
 
 function create(options) {
     let sourceOptions = {};
@@ -42,13 +42,18 @@ function create(options) {
         maxResolution: options.maxResolution
     });
 
-    addLayerInstance(options.id, layerOl); //register instance to expose layerOl specific methods
+    addLayerInstance(options.id, layerOl, 'openlayers'); //register instance to expose layerOl specific methods
 
     return layerOl;
 }
 
 Layers.registerType('cog', {
     create,
+    // TODO use removeLayerInstance in layer destroy
+    // remove: (options, map, mapId, layer) => {
+    //     removeLayerInstance(options.id);
+    //     return null;
+    // },
     update(layer, newOptions, oldOptions, map) {
         if (newOptions.srs !== oldOptions.srs
             || !isEqual(newOptions.style, oldOptions.style)

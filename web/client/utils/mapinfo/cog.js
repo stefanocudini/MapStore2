@@ -10,22 +10,27 @@ import { Observable } from 'rxjs';
 import isObject from 'lodash/isObject';
 import { getLayerInstance } from '../cog/LayerUtils';
 import { getApi } from '../MapUtils';
-import {
-    getMapLibraryFromVisualizationMode
-} from '../MapTypeUtils'
+import { getMapLibraryFromVisualizationMode } from '../MapTypeUtils';
+
 export default {
     buildRequest: (layer, { point, currentLocale, map, ...props } = {}) => {  // executed for each COG layer in TOC
 
         const libName = getMapLibraryFromVisualizationMode(map?.visualizationMode);
 
-        const pixelArr = [point?.pixel.x, point?.pixel.y];
+        const layerInstance = getLayerInstance(layer.id, libName);
 
-        const layerOl = getLayerInstance(layer.id, libName);
+        let pickValue = []
+        if(libName !== 'openlayers' || !layerInstance) {  //openlayers
+            pickValue = layerInstance.getData([point?.pixel.x, point?.pixel.y]);
+        }
+        else if(libName === 'cesium') {  //cesium
 
-        const pickValue = layerOl.getData(pixelArr);
+            pickValue = layerInstance.pickFeatures(point?.pixel.x, point?.pixel.y, map.zoom, point?.latlng?.lat, point?.latlng?.lng);
+            console.log('COG pickValue from Cesium', pickValue);
+        }
+        return {}
+
         const arrayValues = pickValue ? Array.from(pickValue) : [];
-
-
 
         const features = arrayValues.map((value, index) => ({
                 type: 'Feature',
