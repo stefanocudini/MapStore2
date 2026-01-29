@@ -9,7 +9,7 @@ import React from 'react';
 
 import Layers from '../../../utils/cesium/Layers';
 import PropTypes from 'prop-types';
-import { round, isNil, castArray } from 'lodash';
+import { round, isNil, castArray, isFunction } from 'lodash';
 import { getResolutions } from '../../../utils/MapUtils';
 import axios from '../../../libs/ajax';
 import { getProxyCacheByUrl } from '../../../utils/ProxyUtils';
@@ -31,6 +31,7 @@ class CesiumLayer extends React.Component {
         // initial visibility should also take into account the visibility limits
         // in particular for detached layers (eg. Vector, WFS, 3D Tiles, ...)
         const visibility = this.getVisibilityOption(this.props);
+        this._isMounted = true;
         this.createLayer(this.props.type, { ...this.props.options, visibility }, this.props.position, this.props.map, this.props.securityToken);
         if (this.props.options && this.layer && visibility) {
             this.addLayer(this.props);
@@ -76,6 +77,9 @@ class CesiumLayer extends React.Component {
     }
 
     componentWillUnmount() {
+
+        this._isMounted = false;
+
         if (this.layer && this.props.map && !this.props.map.isDestroyed()) {
             // detached layers are layers that do not work through a provider
             // for this reason they cannot be added or removed from the map imageryProviders
@@ -278,6 +282,31 @@ class CesiumLayer extends React.Component {
         if (newProps.options.useForElevation) {
             this.props.map.terrainProvider = this.layer;
         } else {
+            // TODO check if this.layer is a promise, wait for it and execute addImageryProvider with the result
+            // also check if this <CesiumLayer> component is unmounted, it should not execute addImageryProvider
+            // let layer = this.layer;
+            // check if this.layer is a promise (use case in COGLayer)
+            const isPromise = isFunction(this.layer?.then);
+            if (isPromise) {
+                this.layer.then((resolvedLayer) => {
+                    // if (this._isMounted) {
+                    this.provider = this.props.map.imageryLayers.addImageryProvider(resolvedLayer);
+                    this.provider._position = this.props.position;
+                    if (newProps.options.opacity !== undefined) {
+                        this.provider.alpha = newProps.options.opacity;
+                    }
+                    this.layer = resolvedLayer;
+                    this.props.onImageryLayersTreeUpdate();
+                    newProps.map.scene.requestRender();
+                    // }
+                }).catch((error) => {
+                    // eslint-disable-next-line no-console
+                    console.error('Error loading COG layer:', error);
+                });
+                return;
+            }
+
+            // this.layer is not async
             this.provider = this.props.map.imageryLayers.addImageryProvider(this.layer);
             this.provider._position = this.props.position;
             if (newProps.options.opacity !== undefined) {
