@@ -10,6 +10,52 @@ import withConfirm from '../../../misc/withConfirm';
 import withTooltip from '../../../data/featuregrid/enhancers/withTooltip';
 import localizedProps from '../../../misc/enhancers/localizedProps';
 
+import MediaViewer from '../../../mediaViewer';
+
+function DisplayType() {
+    const [displayType, setDisplayType] = useState('Video');
+    const [showInPopup, setShowInPopup] = useState(false);
+
+    const displayTypes = ['Value', 'Image', 'Video', 'Audio', 'URL', 'Iframe'];
+
+    return (
+        <div className="w-full max-w-md p-6 bg-white">
+            <div className="space-y-4">
+
+                <div className="flex items-center justify-between">
+                    <label className="text-sm text-gray-700">
+                        Feature info display type
+                    </label>
+                    <select
+                        value={displayType}
+                        onChange={(e) => setDisplayType(e.target.value)}
+                        className="w-48 px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white cursor-pointer"
+                    >
+                        {displayTypes.map((type) => (
+                            <option key={type} value={type}>
+                                {type}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                    <input
+                        type="checkbox"
+                        id="showPopup"
+                        checked={showInPopup}
+                        onChange={(e) => setShowInPopup(e.target.checked)}
+                        className="w-4 h-4 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                    />
+                    <label htmlFor="showPopup" className="text-sm text-gray-700 cursor-pointer">
+            Show content in a popup
+                    </label>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 const ConfirmButton = localizedProps("tooltip")(withTooltip(withConfirm(Button)));
 
 const isGeometryType = (type) =>
@@ -95,6 +141,9 @@ const Fields = ({fields = [], onLoadFields = () => {}, onChange = () => {}, onCl
                     </FormGroup>
                 </div>);
             })}
+
+        <DisplayType />
+
     </BorderLayout>
     );
 };
