@@ -170,7 +170,7 @@ export const getMessageById = function(messages, msgId) {
     msgId.split('.').forEach(part => {
         message = message ? message[part] : null;
     });
-    return message || msgId;
+    return message || (msgId + 'cose');
 };
 /**
  * Register a parser to translate error services

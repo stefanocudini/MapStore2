@@ -12,7 +12,7 @@ import { Tooltip } from 'react-bootstrap';
 import OverlayTrigger from '../misc/OverlayTrigger';
 import { getSupportedLocales } from '../../utils/LocaleUtils';
 import Button from '../misc/Button';
-
+import Message from './Message';
 class FlagButton extends React.Component {
     static propTypes = {
         id: PropTypes.string,
@@ -52,6 +52,7 @@ class FlagButton extends React.Component {
                         active={this.props.active}>
                         <img src={imgSrc} alt={this.props.label}/>
                     </Button> : <span className= "lang-button">
+                        #<Message msgId="about_title"/>#
                         <img src={imgSrc} alt={this.props.label}/>
                     </span>}
         </OverlayTrigger>) : null;

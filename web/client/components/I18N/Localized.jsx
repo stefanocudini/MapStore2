@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { IntlProvider } from 'react-intl';
+import enMessages from '../../translations/data.en-US.json';
 
 class Localized extends React.Component {
     static propTypes = {
@@ -52,8 +53,16 @@ class Localized extends React.Component {
                 children = children();
             }
 
+            // const fallBackMessages = enMessages.messages;
+
+            const messagesWithFallback = {
+                ...this.flattenMessages(enMessages.messages),
+                ...this.flattenMessages(this.props.messages)
+            };
+
             return (<IntlProvider {...this.props.localeKey && { key: this.props.locale }} locale={this.props.locale}
-                messages={this.flattenMessages(this.props.messages)}
+                // messages={this.flattenMessages(this.props.messages)}
+                messages={messagesWithFallback}
             >
                 {children}
             </IntlProvider>);
