@@ -8,11 +8,10 @@
 
 import {addProjection, Projection} from 'ol/proj';
 import { register as registerProj4 } from 'ol/proj/proj4';
-import ConfigUtils from '../ConfigUtils';
+// import ConfigUtils from '../ConfigUtils';
 
 import proj4 from 'proj4';
-import { onRegister } from '../ProjectionRegistry';
-
+import { onRegister, getAll } from '../ProjectionRegistry';
 /**
  * function needed in openlayers for adding new projection
  */
@@ -27,12 +26,27 @@ export const addProjections = function(code, extent, worldExtent, axisOrientatio
     );
 };
 
+// OLD method
+// /**
+//  * @returns {string} the default projection EPSG:3857 if no custom projectionDefs are defined
+//  */
+// export const fallbackToSupportedProjection = (projectionDefs = ConfigUtils.getConfigProp("projectionDefs") || [], projection) => {
+//     const codes = (projectionDefs.length && projectionDefs.map(({code})  => code) || []).concat(["EPSG:4326", "EPSG:3857", "EPSG:900913"]);
+//     return codes.filter(c => c === projection).length ? projection : "EPSG:3857";
+// };
+
 /**
+ * fallbackToSupportedProjection - replace getConfigProp read with ProjectionRegistry
+ * @param {string} projection the projection code to check for support
  * @returns {string} the default projection EPSG:3857 if no custom projectionDefs are defined
  */
-export const fallbackToSupportedProjection = (projectionDefs = ConfigUtils.getConfigProp("projectionDefs") || [], projection) => {
-    const codes = (projectionDefs.length && projectionDefs.map(({code})  => code) || []).concat(["EPSG:4326", "EPSG:3857", "EPSG:900913"]);
-    return codes.filter(c => c === projection).length ? projection : "EPSG:3857";
+export const fallbackToSupportedProjection = (projection) => {
+    // getAll() include also old static projectionDefs defined in localConfig
+    const codes = getAll().map(({ code }) => code).concat(['EPSG:4326', 'EPSG:3857', 'EPSG:900913']);
+    if (codes.includes(projection)) {
+        return projection;
+    }
+    return 'EPSG:3857';
 };
 
 /**
