@@ -77,7 +77,9 @@ export function registerAll(projDefs = []) {
     return Promise.resolve();
 }
 
-// Grid files require async loading - wrap registerAll for that case
+/**
+ *  Grid files require async loading - wrap registerAll for that case
+ */
 export function registerAllWithGridFiles(projDefs = [], gridFiles = null, proj4Instance = proj4) {
     const gridPromise = gridFiles
         ? registerGridFiles(gridFiles, proj4Instance) // imported from ProjectionUtils
@@ -85,6 +87,11 @@ export function registerAllWithGridFiles(projDefs = [], gridFiles = null, proj4I
     return gridPromise.then(() => registerAll(projDefs));
 }
 
+/**
+ * used by utils/openlayers/projUtils.js
+ * @param {*} listener
+ * @returns {function} Returns an unsubscribe function.
+ */
 export function onRegister(listener) {
     listeners.push(listener);
     // Replay already-registered defs so late subscribers get the full picture
