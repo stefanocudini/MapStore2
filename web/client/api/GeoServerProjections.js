@@ -25,12 +25,20 @@ export function searchProjections(endpointUrl, query, page = 1, limit = DEFAULT_
     });
 }
 
-// Uses /rest/crs/{id} directly - URL constructed from endpointUrl + id, href not needed
+/**
+ * Uses /rest/crs/{id} directly - URL constructed from endpointUrl + id, href not needed
+ * @param {string} endpointUrl - base URL of the GeoServer REST API
+ * @param {string} id - projection code (e.g. "EPSG:32632")
+ * @returns {Promise} Resolves to { code, def } where def is the WKT string
+ */
 export function getProjectionDef(endpointUrl, id) {
+    // TODO probably use the specific href for the crs, returned by the search endpoint, instead of constructing it from endpointUrl + id
     return axios.get(`${endpointUrl}/rest/crs/${id}.json`)
         .then((res) => {
             return {
                 code: res.data.id,
+                bbox: res.data.bbox,
+                bboxWGS84: res.data.bboxWGS84,
                 def: res.data.definition   // WKT string
             };
         });
