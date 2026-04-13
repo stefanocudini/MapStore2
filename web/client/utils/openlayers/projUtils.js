@@ -7,6 +7,7 @@
  */
 
 import {addProjection, Projection} from 'ol/proj';
+import { register as registerProj4 } from 'ol/proj/proj4';
 import ConfigUtils from '../ConfigUtils';
 
 import proj4 from 'proj4';
