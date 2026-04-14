@@ -26,7 +26,7 @@ export function searchProjections(endpointUrl, query, page = 1, limit = DEFAULT_
 }
 
 /**
- * Uses /rest/crs/{id} directly - URL constructed from endpointUrl + id, href not needed
+ * Uses /rest/crs/{id}.json directly - URL constructed from endpointUrl + id, href not needed
  * @param {string} endpointUrl - base URL of the GeoServer REST API
  * @param {string} id - projection code (e.g. "EPSG:32632")
  * @returns {Promise} Resolves to { code, def } where def is the WKT string

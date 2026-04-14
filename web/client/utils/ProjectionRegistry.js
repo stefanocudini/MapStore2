@@ -113,3 +113,15 @@ export function get(code) {
 export function isRegistered(code) {
     return registry.has(code);
 }
+
+const ProjectionRegistry = {
+    register,
+    registerAll,
+    registerAllWithGridFiles,
+    onRegister,
+    getAll,
+    get,
+    isRegistered
+};
+
+export default ProjectionRegistry;

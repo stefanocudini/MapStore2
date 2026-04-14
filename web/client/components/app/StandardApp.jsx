@@ -20,7 +20,7 @@ import { loadPrintCapabilities } from '../../actions/print';
 import ConfigUtils from '../../utils/ConfigUtils';
 import PluginsUtils from '../../utils/PluginsUtils';
 // import { registerGridFiles } from '../../utils/ProjectionUtils';
-import ProjectionRegistry from '../ProjectionRegistry';
+import ProjectionRegistry from '../../utils/ProjectionRegistry';
 import { registerStaticProjectionDefs } from '../../actions/projections';
 
 import url from 'url';
