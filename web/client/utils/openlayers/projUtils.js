@@ -11,7 +11,7 @@ import { register as registerProj4 } from 'ol/proj/proj4';
 // import ConfigUtils from '../ConfigUtils';
 
 import proj4 from 'proj4';
-import { onRegister, getAll } from '../ProjectionRegistry';
+import ProjectionRegistry from '../ProjectionRegistry';
 /**
  * function needed in openlayers for adding new projection
  */
@@ -26,7 +26,7 @@ export const addProjections = function(code, extent, worldExtent, axisOrientatio
     );
 };
 
-// OLD method
+// OLD CODE
 // /**
 //  * @returns {string} the default projection EPSG:3857 if no custom projectionDefs are defined
 //  */
@@ -42,7 +42,7 @@ export const addProjections = function(code, extent, worldExtent, axisOrientatio
  */
 export const fallbackToSupportedProjection = (projection) => {
     // getAll() include also old static projectionDefs defined in localConfig
-    const codes = getAll().map(({ code }) => code).concat(['EPSG:4326', 'EPSG:3857', 'EPSG:900913']);
+    const codes = ProjectionRegistry.getAll().map(({ code }) => code).concat(['EPSG:4326', 'EPSG:3857', 'EPSG:900913']);
     if (codes.includes(projection)) {
         return projection;
     }
@@ -54,7 +54,7 @@ export const fallbackToSupportedProjection = (projection) => {
  * @returns {function} Returns an unsubscribe function.
  */
 export function initOLProjectionAdapter() {
-    return onRegister(({ code, extent, worldExtent, axisOrientation, units, supported }) => {
+    return ProjectionRegistry.onRegister(({ code, extent, worldExtent, axisOrientation, units, supported }) => {
         if (!supported) {
             return;
         }

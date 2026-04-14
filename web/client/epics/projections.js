@@ -10,9 +10,15 @@ import Rx from 'rxjs';
 
 import { searchProjections, getProjectionDef } from '../api/GeoServerProjections';
 import {
-    SEARCH_PROJECTIONS, LOAD_PROJECTION_DEF, ADD_PROJECTION_DEF,
-    searchProjectionsSuccess, searchProjectionsError, loadProjectionDefError, addProjectionDef
+    SEARCH_PROJECTIONS,
+    LOAD_PROJECTION_DEF,
+    ADD_PROJECTION_DEF,
+    searchProjectionsSuccess,
+    searchProjectionsError,
+    loadProjectionDefError,
+    addProjectionDef
 } from '../actions/projections';
+
 import ProjectionRegistry from '../ProjectionRegistry';
 
 
