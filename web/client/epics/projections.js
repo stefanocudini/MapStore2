@@ -19,7 +19,7 @@ import {
     addProjectionDef
 } from '../actions/projections';
 
-import ProjectionRegistry from '../ProjectionRegistry';
+import ProjectionRegistry from '../utils/ProjectionRegistry';
 
 
 /**

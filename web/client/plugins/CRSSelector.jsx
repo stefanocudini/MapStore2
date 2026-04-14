@@ -38,11 +38,46 @@ import { registerCustomSaveHandler } from '../selectors/mapsave';
 import epics from '../epics/crsselector';
 import Spinner from '../components/layout/Spinner';
 
+import { dynamicProjectionDefsSelector } from '../selectors/projections';
+
 const LazyAvailableProjections = lazy(() =>
     import(/* webpackChunkName: "crs-available-projections-dialog" */ '../components/CRSSelector/AvailableProjections')
 );
 
-registerCustomSaveHandler('crsSelector', (state) => (state?.crsselector?.config));
+// OLD CODE
+// registerCustomSaveHandler('crsSelector', (state) => (state?.crsselector?.config));
+
+/**
+ *  Current handler saves crsselector.config (projectionList)
+ *  Extended to persist dynamic defs needed by non-admin users at map load time
+ */
+registerCustomSaveHandler('crsSelector', (state) => {
+    const config = state?.crsselector?.config;
+    // let's use proper selector and not access the state directly
+    const mapProjection = state?.map?.present?.projection;
+    const allDynamic = dynamicProjectionDefsSelector(state);
+
+    // CRSSelector has two levels:
+    //   1. AvailableProjections (admin/canEdit) - searches endpoint, adds projections
+    //      to the map's projectionList. Endpoint may be restricted to admin users only.
+    //   2. Quick CRS switcher (all users) - shows projectionList items configured by admin.
+    //
+    // We must persist dynamic defs for every projection in projectionList so that
+    // non-admin / unauthenticated users can use the quick switcher without endpoint access.
+    // We also include map.projection in case it was set to a dynamic CRS.
+    // Defs that the admin merely browsed but did not add to projectionList are not persisted.
+    const requiredCodes = new Set((config?.projectionList || []).map(p => p.value ?? p));
+    if (mapProjection) {
+        requiredCodes.add(mapProjection);
+    }
+
+    const defsToSave = allDynamic.filter(d => requiredCodes.has(d.code));
+
+    return {
+        ...config,
+        dynamicProjectionDefs: defsToSave.length ? defsToSave : undefined
+    };
+});
 
 const Button = tooltip(ButtonRB);
 
