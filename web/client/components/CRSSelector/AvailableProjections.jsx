@@ -220,7 +220,15 @@ AvailableProjections.propTypes = {
     selectedProjection: PropTypes.string,
     setConfig: PropTypes.func,
     onSelect: PropTypes.func,
-    projectionDefs: PropTypes.array
+    projectionDefs: PropTypes.array,
+
+    // NEW CODE
+    endpointUrl: PropTypes.string,  // forwarded from CRSSelector plugin cfg prop
+    searchResults: PropTypes.array, // from projectionSearchResultsSelector (accumulated, all loaded pages)
+    searchLoading: PropTypes.bool,  // from projectionSearchLoadingSelector
+    searchTotal: PropTypes.number,  // from projectionSearchTotalSelector
+    onSearch: PropTypes.func,       // dispatches searchProjections; page=1 for new queries, page=N for load more
+    onClearSearch: PropTypes.func   // dispatches clearProjectionSearch()
 };
 
 AvailableProjections.defaultProps = {
@@ -228,7 +236,14 @@ AvailableProjections.defaultProps = {
     selectedProjection: null,
     setConfig: () => {},
     onSelect: () => {},
-    projectionDefs: []
+    projectionDefs: [],
+    // NEW CODE
+    endpointUrl: '',
+    searchResults: [],
+    searchLoading: false,
+    searchTotal: 0,
+    onSearch: () => {},
+    onClearSearch: () => {}
 };
 
 export default AvailableProjections;

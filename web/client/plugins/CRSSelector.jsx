@@ -38,7 +38,16 @@ import { registerCustomSaveHandler } from '../selectors/mapsave';
 import epics from '../epics/crsselector';
 import Spinner from '../components/layout/Spinner';
 
-import { dynamicProjectionDefsSelector } from '../selectors/projections';
+import {
+    dynamicProjectionDefsSelector,
+    projectionSearchResultsSelector,
+    projectionSearchLoadingSelector,
+    projectionSearchTotalSelector
+} from '../selectors/projections';
+
+import projectionsReducers from '../reducers/projections';
+
+import { searchProjections, clearProjectionSearch, loadProjectionDef } from '../actions/projections';
 
 const LazyAvailableProjections = lazy(() =>
     import(/* webpackChunkName: "crs-available-projections-dialog" */ '../components/CRSSelector/AvailableProjections')
@@ -297,7 +306,17 @@ const crsSelector = connect(
         typeInput: setInputValue,
         setCrs: changeMapCrs,
         onError: error,
-        setConfig: setProjectionsConfig
+        setConfig: setProjectionsConfig,
+        // NEW CODE
+        // endpointUrl comes directly from plugin cfg - no selector needed
+        // New Redux connections:
+        searchResults: projectionSearchResultsSelector,
+        searchLoading: projectionSearchLoadingSelector,
+        searchTotal: projectionSearchTotalSelector,
+        // New actions connected:
+        onSearch: searchProjections,          // signature: (endpointUrl, query, page) - page=1 resets, page>1 appends
+        onClearSearch: clearProjectionSearch,
+        onSelectEndpointProjection: loadProjectionDef
     },
     (stateProps, dispatchProps, ownProps) => {
         const { pluginCfg, ...otherProps } = ownProps || {};
@@ -326,6 +345,7 @@ const crsSelector = connect(
   *
   * @prop {string[]} cfg.filterAllowedCRS (deprecated) list of allowed crs in the combobox list to used as filter for the one of retrieved proj4.defs()
   * @prop {object} cfg.additionalCRS (deprecated) additional crs added to the list. The label param is used after in the combobox.
+  * @prop {string} cfg.endpointUrl (optional) if provided, the plugin will fetch available projections from this endpoint.
   *
   * @example
   * // If you want to add some crs you need to provide a definition and adding it in the additionalCRS property
@@ -342,6 +362,7 @@ const crsSelector = connect(
   * // And configure the new projection for the plugin as below:
   * { "name": "CRSSelector",
   *   "cfg": {
+  *     "endpointUrl": "https://example.com/geoserver/rest/crs",
   *     "availableProjections": [
   *       { "value": "EPSG:4326", "label": "EPSG:4326" },
   *       { "value": "EPSG:3857", "label": "EPSG:3857" },
@@ -363,7 +384,8 @@ export default {
     }),
     reducers: {
         crsselector: crsselectorReducers,
-        annotations: annotationsReducers
+        annotations: annotationsReducers,
+        projections: projectionsReducers
     },
     epics
 };
