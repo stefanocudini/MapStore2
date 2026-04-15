@@ -6,7 +6,13 @@ import tooltip from '../misc/enhancers/tooltip';
 
 const GlyphiconWithTooltip = tooltip(Glyphicon);
 
-export const ProjectionList = ({ filteredProjections, projectionList, selectedProjection, setConfig, setHoveredCrs }) => {
+export const ProjectionList = ({
+    filteredProjections,
+    projectionList,
+    selectedProjection,
+    setConfig,
+    setHoveredCrs
+}) => {
     const projectionListValues = useMemo(() => projectionList.map(p => p.value), [projectionList]);
     return (
         <>
