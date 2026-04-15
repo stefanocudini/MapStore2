@@ -17,15 +17,30 @@ import MapView from './MapView';
 import { getProjection, getAvailableProjections } from '../../utils/ProjectionUtils';
 import { getMessageById } from '../../utils/LocaleUtils';
 import localizedProps from '../misc/enhancers/localizedProps';
-import ProjectionList from './ProjectionList';
+import { ProjectionList, ProjectionListRemote } from './ProjectionList';
 
 const FormControl = localizedProps("placeholder")(FC);
 
-const AvailableProjections = ({ open, onClose, projectionList, selectedProjection, setConfig, onSelect, projectionDefs, selectedProjectionList }, context) => {
+const AvailableProjections = ({
+    open,
+    onClose,
+    projectionList,
+    selectedProjection,
+    setConfig,
+    onSelect,
+    projectionDefs,
+    selectedProjectionList,
+    searchLoading,
+    onSearch
+}, context) => {
+
     const [filterText, setFilterText] = useState('');
     const [hoveredCrs, setHoveredCrs] = useState(null);
     const [currentProjectionList, setCurrentProjectionList] = useState(selectedProjectionList);
     const [currentSelectedProjection, setCurrentSelectedProjection] = useState(selectedProjection);
+
+    const [filterTextRemote, setFilterTextRemote] = useState(''); // NEW CODE - separate state for remote search input
+    const [searchResultsRemote, setSearchResultsRemote] = useState([]); // NEW CODE - local state to hold search results for current query
 
     // Sync local state with incoming props when dialog is opened
     useEffect(() => {
@@ -167,30 +182,68 @@ const AvailableProjections = ({ open, onClose, projectionList, selectedProjectio
                             />
                         </FormGroup>
                     </div>
-                    <div className="ms-crs-projections-list">
-                        <ProjectionList
-                            filteredProjections={filteredProjections}
-                            projectionList={currentProjectionList}
-                            selectedProjection={currentSelectedProjection}
-                            setConfig={({ defaultCrs, projectionList: updatedList }) => {
-                                if (updatedList) {
-                                    setCurrentProjectionList(updatedList);
-                                }
-                                if (defaultCrs) {
-                                    setCurrentSelectedProjection(defaultCrs);
-                                }
-                            }}
-                            setHoveredCrs={setHoveredCrs}
-                        />
+                    <div style={{ display: 'flex', gap: '16px' }}>
+                        <div className="ms-crs-projections-list" style={{ flex: 1 }}>
+                            <ProjectionList
+                                filteredProjections={filteredProjections}
+                                projectionList={currentProjectionList}
+                                selectedProjection={currentSelectedProjection}
+                                setConfig={({ defaultCrs, projectionList: updatedList }) => {
+                                    if (updatedList) {
+                                        setCurrentProjectionList(updatedList);
+                                    }
+                                    if (defaultCrs) {
+                                        setCurrentSelectedProjection(defaultCrs);
+                                    }
+                                }}
+                                setHoveredCrs={setHoveredCrs}
+                            />
+                        </div>
+                        <div className="ms-crs-projections-map" style={{ flex: 1 }}>
+                            <MapView
+                                id="crs-available-projections-map"
+                                options={{ style: { height: '100%' }, registerHooks: false}}
+                                map={map}
+                                layers={layers}
+                                interactive={false}
+                            />
+                        </div>
                     </div>
-                    <div className="ms-crs-projections-map">
-                        <MapView
-                            id="crs-available-projections-map"
-                            options={{ style: { height: '100%' }, registerHooks: false}}
-                            map={map}
-                            layers={layers}
-                            interactive={false}
-                        />
+                    <div className="ms-crs-projections-remote-search">
+                        <Message msgId="crsSelector.searchFromServer" />
+                        <FormGroup>
+                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                <FormControl
+                                    type="text"
+                                    value={filterTextRemote}
+                                    placeholder={getMessageById(context.messages, "crsSelector.searchProjectionFromServer")}
+                                    onChange={(event) => setFilterTextRemote(event.target.value)}
+                                />
+                                <Button
+                                    onClick={() => filterTextRemote && onSearch(filterTextRemote, 1)}
+                                    bsStyle="primary"
+                                    disabled={!filterTextRemote.trim() || searchLoading}
+                                >
+                                    <Glyphicon glyph="search" />
+                                </Button>
+                            </div>
+                            {searchLoading && (
+                                <div className="ms-crs-search-loading">
+                                    <Message msgId="crsSelector.searching" />
+                                </div>
+                            )}
+                            {!searchLoading && filterTextRemote && (
+                                <ProjectionListRemote
+                                    searchResults={searchResultsRemote}
+                                    projectionList={currentProjectionList}
+                                    setConfig={({ projectionList: updatedList }) => {
+                                        if (updatedList) {
+                                            setCurrentProjectionList(updatedList);
+                                        }
+                                    }}
+                                />
+                            )}
+                        </FormGroup>
                     </div>
                 </div>
                 <div role="footer">

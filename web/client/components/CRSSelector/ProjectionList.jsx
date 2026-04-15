@@ -6,7 +6,7 @@ import tooltip from '../misc/enhancers/tooltip';
 
 const GlyphiconWithTooltip = tooltip(Glyphicon);
 
-const ProjectionList = ({ filteredProjections, projectionList, selectedProjection, setConfig, setHoveredCrs }) => {
+export const ProjectionList = ({ filteredProjections, projectionList, selectedProjection, setConfig, setHoveredCrs }) => {
     const projectionListValues = useMemo(() => projectionList.map(p => p.value), [projectionList]);
     return (
         <>
@@ -81,4 +81,56 @@ const ProjectionList = ({ filteredProjections, projectionList, selectedProjectio
     );
 };
 
-export default ProjectionList;
+export const ProjectionListRemote = ({ filteredProjections, projectionList, setConfig }) => {
+    const projectionListValues = useMemo(() => projectionList.map(p => p.value), [projectionList]);
+    return (
+        <>
+            <FlexBox centerChildrenVertically gap="sm" className="ms-crs-projections-header">
+                <div className="ms-selected-projection">
+                    <GlyphiconWithTooltip
+                        glyph="info-sign"
+                        tooltip={<Message msgId="crsSelector.help" />}
+                        tooltipPosition="top"
+                    />
+                </div>
+                <div><Message msgId="crsSelector.label" /></div>
+                <div><Message msgId="crsSelector.authorityId" /></div>
+                <div className="ms-selected-projection" />
+            </FlexBox>
+            {filteredProjections.map(({ label, value }) => {
+                return (
+                    <FlexBox
+                        key={value}
+                        centerChildrenVertically
+                        gap="sm"
+                        classNames="ms-crs-projection-item"
+                        onClick={() => {
+                            setConfig({
+                                defaultCrs: value,
+                                projectionList: projectionListValues.includes(value)
+                                    ? projectionList
+                                    : [...projectionList, { value, label }]
+                            });
+                        }}
+                    >
+                        <div className="ms-selected-projection">
+                            <FormControl
+                                type="checkbox"
+                                onClick={(event) => event.stopPropagation()}
+                                onChange={(event) => {
+                                    setConfig({
+                                        projectionList: event.target.checked
+                                            ? [...projectionList, { value, label }]
+                                            : projectionList.filter(c => c.value !== value)
+                                    });
+                                }}
+                            />
+                        </div>
+                        <div>{label}</div>
+                        <div>{value}</div>
+                    </FlexBox>
+                );
+            })}
+        </>
+    );
+};
