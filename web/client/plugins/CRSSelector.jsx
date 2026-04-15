@@ -101,6 +101,7 @@ const Selector = ({
     availableCRS = getAvailableCRS(),
     projectionDefs,
     availableProjections,
+    projectionDefsEndpoint,
     setCrs = () => {},
     typeInput = () => {},
     enabled = true,
@@ -108,6 +109,7 @@ const Selector = ({
     currentRole,
     projectionsConfig = {},
     setConfig = () => {},
+    onSearchRemote = () => {},
     currentBackground,
     onError = () => {},
     canEditProjection = true
@@ -249,6 +251,15 @@ const Selector = ({
                                 setConfig={setConfig}
                                 projectionDefs={projectionDefs}
                                 selectedProjectionList={list}
+                                onSearchRemote={(query, page = 1) => {
+                                    // setCurrentProjectionList([]); // reset local list to show loading state in remote list
+                                    // setSearchResultsRemote([]); // clear previous search results
+
+                                    // eslint-disable-next-line no-console
+                                    console.log('Search projections with query:', query, projectionDefsEndpoint);
+
+                                    onSearchRemote(projectionDefsEndpoint, query, page);
+                                }}
                             />
                         </Suspense>
                     )}
@@ -271,6 +282,7 @@ Selector.propTypes = {
     allowedRoles: PropTypes.array,
     currentRole: PropTypes.string,
     availableProjections: PropTypes.array,
+    projectionDefsEndpoint: PropTypes.string,
     projectionsConfig: PropTypes.object,
     setConfig: PropTypes.func,
     canEditProjection: PropTypes.bool
@@ -314,7 +326,7 @@ const crsSelector = connect(
         searchLoading: projectionSearchLoadingSelector,
         searchTotal: projectionSearchTotalSelector,
         // New actions connected:
-        onSearch: searchProjections,          // signature: (endpointUrl, query, page) - page=1 resets, page>1 appends
+        onSearchRemote: searchProjections,          // signature: (endpointUrl, query, page) - page=1 resets, page>1 appends
         onClearSearch: clearProjectionSearch,
         onSelectEndpointProjection: loadProjectionDef
     },
@@ -322,11 +334,13 @@ const crsSelector = connect(
         const { pluginCfg, ...otherProps } = ownProps || {};
         const { filterAllowedCRS = [], additionalCRS = {} } = pluginCfg || {};
         const availableProjections = pluginCfg?.availableProjections || getAvailableProjectionsFromConfig(filterAllowedCRS, additionalCRS);
+        const projectionDefsEndpoint = pluginCfg?.projectionDefsEndpoint;
         return {
             ...otherProps,
             ...stateProps,
             ...dispatchProps,
             ...(pluginCfg || {}),
+            projectionDefsEndpoint,
             availableProjections
         };
     }

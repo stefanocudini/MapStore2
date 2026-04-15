@@ -81,7 +81,7 @@ export const ProjectionList = ({ filteredProjections, projectionList, selectedPr
     );
 };
 
-export const ProjectionListRemote = ({ filteredProjections, projectionList, setConfig }) => {
+export const ProjectionListRemote = ({ searchResults, projectionList, setConfig }) => {
     const projectionListValues = useMemo(() => projectionList.map(p => p.value), [projectionList]);
     return (
         <>
@@ -97,7 +97,7 @@ export const ProjectionListRemote = ({ filteredProjections, projectionList, setC
                 <div><Message msgId="crsSelector.authorityId" /></div>
                 <div className="ms-selected-projection" />
             </FlexBox>
-            {filteredProjections.map(({ label, value }) => {
+            {searchResults.map(({ label, value }) => {
                 return (
                     <FlexBox
                         key={value}

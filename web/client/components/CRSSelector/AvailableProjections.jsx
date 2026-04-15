@@ -31,7 +31,7 @@ const AvailableProjections = ({
     projectionDefs,
     selectedProjectionList,
     searchLoading,
-    onSearch
+    onSearchRemote
 }, context) => {
 
     const [filterText, setFilterText] = useState('');
@@ -220,7 +220,7 @@ const AvailableProjections = ({
                                     onChange={(event) => setFilterTextRemote(event.target.value)}
                                 />
                                 <Button
-                                    onClick={() => filterTextRemote && onSearch(filterTextRemote, 1)}
+                                    onClick={() => filterTextRemote && onSearchRemote(filterTextRemote, 1)}
                                     bsStyle="primary"
                                     disabled={!filterTextRemote.trim() || searchLoading}
                                 >
@@ -280,7 +280,7 @@ AvailableProjections.propTypes = {
     searchResults: PropTypes.array, // from projectionSearchResultsSelector (accumulated, all loaded pages)
     searchLoading: PropTypes.bool,  // from projectionSearchLoadingSelector
     searchTotal: PropTypes.number,  // from projectionSearchTotalSelector
-    onSearch: PropTypes.func,       // dispatches searchProjections; page=1 for new queries, page=N for load more
+    onSearchRemote: PropTypes.func,       // dispatches searchProjections; page=1 for new queries, page=N for load more
     onClearSearch: PropTypes.func   // dispatches clearProjectionSearch()
 };
 
@@ -295,7 +295,7 @@ AvailableProjections.defaultProps = {
     searchResults: [],
     searchLoading: false,
     searchTotal: 0,
-    onSearch: () => {},
+    onSearchRemote: () => {},
     onClearSearch: () => {}
 };
 
