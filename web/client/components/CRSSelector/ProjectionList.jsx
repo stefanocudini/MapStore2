@@ -9,12 +9,11 @@ const GlyphiconWithTooltip = tooltip(Glyphicon);
 
 export const formatCRSItem = function(item) {
     const { id, href, label } = item;
-    const finalId = id.toLowerCase().replace(':', '');
-    // example of href= "href": "https://development.demo.geonode.org/geoserver/rest/crs/EPSG:2000.wkt"
-
-    const finalLabel = label && isString(label) && label.trim() ? label : href.split('/').pop().replace('.', ' ');
+    const key = id.toLowerCase().replace(':', '');
+    // sample of href: "href": "https://development.demo.geonode.org/geoserver/rest/crs/EPSG:2000.wkt"
+    const finalLabel = label && isString(label) && label.trim() ? label : id;
     const finalValue = id.toUpperCase();
-    return { id: finalId, value: finalValue, label: finalLabel };
+    return { key, value: finalValue, label: finalLabel };
 };
 
 export const ProjectionList = ({
@@ -100,8 +99,9 @@ export const ProjectionList = ({
 
 export const ProjectionListRemote = ({
     searchResults,
-    projectionList,
-    setConfig
+    // projectionList,
+    // setConfig
+    onSelectRemoteCrs = () => {}
 }) => {
     return (
         <>
@@ -113,16 +113,16 @@ export const ProjectionListRemote = ({
                         tooltipPosition="top"
                     />
                 </div>
-                {/* TODO enable when enabled in backend <div><Message msgId="crsSelector.label" /></div> */}
+                {/* TODO enable when label enabled in backend <div><Message msgId="crsSelector.label" /></div> */}
                 <div><Message msgId="crsSelector.authorityId" /></div>
                 <div className="ms-selected-projection" />
             </FlexBox>
             { Array.isArray(searchResults) && searchResults.map((crsItem) => {
                 // TODO ask to backend to return also label in list endpoint
-                const { id, value, label } = formatCRSItem(crsItem);
+                const { key, value, label } = formatCRSItem(crsItem);
                 return (
                     <FlexBox
-                        key={id}
+                        key={key}
                         centerChildrenVertically
                         gap="sm"
                         classNames="ms-crs-projection-item"
@@ -134,15 +134,17 @@ export const ProjectionListRemote = ({
                                 onClick={(event) => event.stopPropagation()}
                                 onChange={({target}) => {
                                     const targetValue = target.value.toUpperCase();
-                                    setConfig({
-                                        projectionList: target.checked
-                                            ? [...projectionList, { value: targetValue, label: targetValue }]
-                                            : projectionList.filter(c => c.value !== targetValue)
-                                    });
+                                    // setConfig({
+                                    //     projectionList: target.checked
+                                    //         ? [...projectionList, { value: targetValue, label: targetValue }]
+                                    //         : projectionList.filter(c => c.value !== targetValue)
+                                    // });
+                                    onSelectRemoteCrs(targetValue);
                                 }}
                             />
                         </div>
                         <div>{label}</div>
+                        {/* TODO enable when label enabled in backend <div>{value}</div> */}
                     </FlexBox>
                 );
             })}

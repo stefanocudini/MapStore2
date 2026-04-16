@@ -110,8 +110,9 @@ const Selector = ({
     currentRole,
     projectionsConfig = {},
     setConfig = () => {},
-    searchResultsRemote = [],
+    searchResultsRemote,
     onSearchRemote = () => {},
+    onSelectEndpointProjection = () => {},
     currentBackground,
     onError = () => {},
     canEditProjection = true
@@ -254,11 +255,21 @@ const Selector = ({
                                 projectionDefs={projectionDefs}
                                 selectedProjectionList={list}
                                 searchResultsRemote={searchResultsRemote}
+                                projectionDefsEndpoint={projectionDefsEndpoint}
                                 onSearchRemote={(query, page = 1) => {
-                                    // setCurrentProjectionList([]); // reset local list to show loading state in remote list
-                                    // setSearchResultsRemote([]); // clear previous search results
-
                                     onSearchRemote(projectionDefsEndpoint, query, page);
+                                }}
+                                onSelectRemoteCrs={(crsId) => {
+                                    // es-lint-disable-next-line no-console
+                                    console.log('onSelectRemoteCrs:', crsId, projectionDefsEndpoint);
+                                    onSelectEndpointProjection(projectionDefsEndpoint, crsId);
+                                    // TODO after loading the definition, should we also add it to the projectionList for quick switching, or just make it available without adding to the list?
+                                    // if adding to the list, need to decide on label (endpoint doesn't return one) and handle duplicates if user selects multiple times from search results
+                                    const newCrs = { value: crsId, label: crsId };
+                                    const updatedList = [...list, newCrs];
+                                    setConfig({
+                                        projectionList: updatedList
+                                    });
                                 }}
                             />
                         </Suspense>
@@ -350,6 +361,7 @@ const crsSelector = connect(
             ...dispatchProps,
             ...(pluginCfg || {}),
             projectionDefsEndpoint,
+            // onSelectEndpointProjection: loadProjectionDef,
             availableProjections
         };
     }

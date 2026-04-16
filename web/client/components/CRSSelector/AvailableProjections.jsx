@@ -32,7 +32,8 @@ const AvailableProjections = ({
     selectedProjectionList,
     searchLoading,
     searchResultsRemote,
-    onSearchRemote
+    onSearchRemote,
+    onSelectRemoteCrs
 }, context) => {
 
     const [filterText, setFilterText] = useState('');
@@ -234,12 +235,13 @@ const AvailableProjections = ({
                             {!searchLoading && filterTextRemote && (
                                 <ProjectionListRemote
                                     searchResults={searchResultsRemote}
-                                    projectionList={currentProjectionList}
-                                    setConfig={({ projectionList: updatedList }) => {
-                                        if (updatedList) {
-                                            setCurrentProjectionList(updatedList);
-                                        }
-                                    }}
+                                    // projectionList={currentProjectionList}
+                                    // setConfig={({ projectionList: updatedList }) => {
+                                    //     if (updatedList) {
+                                    //         setCurrentProjectionList(updatedList);
+                                    //     }
+                                    // }}
+                                    onSelectRemoteCrs={onSelectRemoteCrs}
                                 />
                             )}
                         </FormGroup>
@@ -275,12 +277,12 @@ AvailableProjections.propTypes = {
     projectionDefs: PropTypes.array,
 
     // NEW CODE
-    endpointUrl: PropTypes.string,  // forwarded from CRSSelector plugin cfg prop
     searchResults: PropTypes.array, // from projectionSearchResultsSelector (accumulated, all loaded pages)
     searchLoading: PropTypes.bool,  // from projectionSearchLoadingSelector
     searchTotal: PropTypes.number,  // from projectionSearchTotalSelector
     onSearchRemote: PropTypes.func,       // dispatches searchProjections; page=1 for new queries, page=N for load more
-    onClearSearch: PropTypes.func   // dispatches clearProjectionSearch()
+    onClearSearch: PropTypes.func,   // dispatches clearProjectionSearch()
+    onSelectRemoteCrs: PropTypes.func // dispatches loadProjectionDef for the selected projection id
 };
 
 AvailableProjections.defaultProps = {
@@ -290,12 +292,12 @@ AvailableProjections.defaultProps = {
     onSelect: () => {},
     projectionDefs: [],
     // NEW CODE
-    endpointUrl: '',
     searchResults: [],
     searchLoading: false,
     searchTotal: 0,
     onSearchRemote: () => {},
-    onClearSearch: () => {}
+    onClearSearch: () => {},
+    onSelectRemoteCrs: () => {}
 };
 
 export default AvailableProjections;
