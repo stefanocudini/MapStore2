@@ -103,7 +103,7 @@ export const ProjectionListRemote = ({ searchResults, projectionList, setConfig 
                 <div><Message msgId="crsSelector.authorityId" /></div>
                 <div className="ms-selected-projection" />
             </FlexBox>
-            {searchResults.map(({ label, value }) => {
+            { Array.isArray(searchResults) && searchResults.map(({ label, value }) => {
                 return (
                     <FlexBox
                         key={value}

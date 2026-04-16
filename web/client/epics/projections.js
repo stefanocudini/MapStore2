@@ -41,6 +41,7 @@ export const searchProjectionsEpic = (action$) =>
             return Rx.Observable.empty();
         })
         .switchMap(({ endpointUrl, query, page }) => {
+            // console.log('searchProjectionsEpic', { endpointUrl, query, page });
             if (!endpointUrl) {
                 return Rx.Observable.empty();
             }
@@ -84,3 +85,10 @@ export const registerDynamicProjectionDefEpic = (action$) =>
             }
             return Rx.Observable.empty();
         });
+
+
+export default {
+    searchProjectionsEpic,
+    loadProjectionDefEpic,
+    registerDynamicProjectionDefEpic
+};

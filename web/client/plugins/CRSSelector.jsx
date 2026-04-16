@@ -35,7 +35,8 @@ import ButtonRB from '../components/misc/Button';
 import FlexBox from '../components/layout/FlexBox';
 import useClickOutside from '../hooks/useClickOutside';
 import { registerCustomSaveHandler } from '../selectors/mapsave';
-import epics from '../epics/crsselector';
+import crsselectorEpics  from '../epics/crsselector';
+import projectionsEpics from '../epics/projections';
 import Spinner from '../components/layout/Spinner';
 
 import {
@@ -109,6 +110,7 @@ const Selector = ({
     currentRole,
     projectionsConfig = {},
     setConfig = () => {},
+    searchResultsRemote = [],
     onSearchRemote = () => {},
     currentBackground,
     onError = () => {},
@@ -251,12 +253,10 @@ const Selector = ({
                                 setConfig={setConfig}
                                 projectionDefs={projectionDefs}
                                 selectedProjectionList={list}
+                                searchResultsRemote={searchResultsRemote}
                                 onSearchRemote={(query, page = 1) => {
                                     // setCurrentProjectionList([]); // reset local list to show loading state in remote list
                                     // setSearchResultsRemote([]); // clear previous search results
-
-                                    // eslint-disable-next-line no-console
-                                    console.log('Search projections with query:', query, projectionDefsEndpoint);
 
                                     onSearchRemote(projectionDefsEndpoint, query, page);
                                 }}
@@ -285,7 +285,8 @@ Selector.propTypes = {
     projectionDefsEndpoint: PropTypes.string,
     projectionsConfig: PropTypes.object,
     setConfig: PropTypes.func,
-    canEditProjection: PropTypes.bool
+    canEditProjection: PropTypes.bool,
+    searchResultsRemote: PropTypes.array
 };
 
 const crsSelector = connect(
@@ -304,7 +305,14 @@ const crsSelector = connect(
         editingSelector,
         crsProjectionsConfigSelector,
         canEditProjectionSelector,
-        ( currentRole, currentBackground, selected, projectionDefs, value, mode, cesium, bottomPanel, measureEnabled, queryPanelEnabled, printEnabled, editingAnnotations, projectionsConfig, canEditProjection) => ({
+        projectionSearchResultsSelector,
+        projectionSearchLoadingSelector,
+        projectionSearchTotalSelector,
+        ( currentRole, currentBackground, selected, projectionDefs, value, mode, cesium, bottomPanel, measureEnabled, queryPanelEnabled, printEnabled, editingAnnotations,
+            projectionsConfig,
+            canEditProjection,
+            searchResultsRemote) => ({
+
             currentRole,
             currentBackground,
             selected,
@@ -312,7 +320,8 @@ const crsSelector = connect(
             value,
             enabled: (mode !== 'EDIT') && !cesium && !bottomPanel && !measureEnabled && !queryPanelEnabled && !printEnabled && !editingAnnotations,
             projectionsConfig,
-            canEditProjection
+            canEditProjection,
+            searchResultsRemote
         })
     ), {
         typeInput: setInputValue,
@@ -322,7 +331,7 @@ const crsSelector = connect(
         // NEW CODE
         // endpointUrl comes directly from plugin cfg - no selector needed
         // New Redux connections:
-        searchResults: projectionSearchResultsSelector,
+        // searchResultsRemote: projectionSearchResultsSelector,
         searchLoading: projectionSearchLoadingSelector,
         searchTotal: projectionSearchTotalSelector,
         // New actions connected:
@@ -401,5 +410,8 @@ export default {
         annotations: annotationsReducers,
         projections: projectionsReducers
     },
-    epics
+    epics: {
+        ...crsselectorEpics,
+        ...projectionsEpics
+    }
 };
