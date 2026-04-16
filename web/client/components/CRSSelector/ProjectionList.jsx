@@ -103,7 +103,6 @@ export const ProjectionListRemote = ({
     projectionList,
     setConfig
 }) => {
-    const projectionListValues = useMemo(() => projectionList.map(p => p.value), [projectionList]);
     return (
         <>
             <FlexBox centerChildrenVertically gap="sm" className="ms-crs-projections-header">
