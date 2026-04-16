@@ -104,7 +104,7 @@ export const ProjectionListRemote = ({
     onSelectRemoteCrs = () => {}
 }) => {
     return (
-        <>
+        <div>
             <FlexBox centerChildrenVertically gap="sm" className="ms-crs-projections-header">
                 <div className="ms-selected-projection">
                     <GlyphiconWithTooltip
@@ -117,37 +117,39 @@ export const ProjectionListRemote = ({
                 <div><Message msgId="crsSelector.authorityId" /></div>
                 <div className="ms-selected-projection" />
             </FlexBox>
-            { Array.isArray(searchResults) && searchResults.map((crsItem) => {
+            <div className="ms-crs-projections-results">
+                { Array.isArray(searchResults) && searchResults.map((crsItem) => {
                 // TODO ask to backend to return also label in list endpoint
-                const { key, value, label } = formatCRSItem(crsItem);
-                return (
-                    <FlexBox
-                        key={key}
-                        centerChildrenVertically
-                        gap="sm"
-                        classNames="ms-crs-projection-item"
-                    >
-                        <div className="ms-selected-projection">
-                            <FormControl
-                                type="checkbox"
-                                value={value}
-                                onClick={(event) => event.stopPropagation()}
-                                onChange={({target}) => {
-                                    const targetValue = target.value.toUpperCase();
-                                    // setConfig({
-                                    //     projectionList: target.checked
-                                    //         ? [...projectionList, { value: targetValue, label: targetValue }]
-                                    //         : projectionList.filter(c => c.value !== targetValue)
-                                    // });
-                                    onSelectRemoteCrs(targetValue);
-                                }}
-                            />
-                        </div>
-                        <div>{label}</div>
-                        {/* TODO enable when label enabled in backend <div>{value}</div> */}
-                    </FlexBox>
-                );
-            })}
-        </>
+                    const { key, value, label } = formatCRSItem(crsItem);
+                    return (
+                        <FlexBox
+                            key={key}
+                            centerChildrenVertically
+                            gap="sm"
+                            classNames="ms-crs-projection-item"
+                        >
+                            <div className="ms-selected-projection">
+                                <FormControl
+                                    type="checkbox"
+                                    value={value}
+                                    onClick={(event) => event.stopPropagation()}
+                                    onChange={({target}) => {
+                                        const targetValue = target.value.toUpperCase();
+                                        // setConfig({
+                                        //     projectionList: target.checked
+                                        //         ? [...projectionList, { value: targetValue, label: targetValue }]
+                                        //         : projectionList.filter(c => c.value !== targetValue)
+                                        // });
+                                        onSelectRemoteCrs(targetValue);
+                                    }}
+                                />
+                            </div>
+                            <div>{label}</div>
+                            {/* TODO enable when label enabled in backend <div>{value}</div> */}
+                        </FlexBox>
+                    );
+                })}
+            </div>
+        </div>
     );
 };

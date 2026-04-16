@@ -260,7 +260,7 @@ const Selector = ({
                                     onSearchRemote(projectionDefsEndpoint, query, page);
                                 }}
                                 onSelectRemoteCrs={(crsId) => {
-                                    // es-lint-disable-next-line no-console
+                                    // eslint-disable-next-line no-console
                                     console.log('onSelectRemoteCrs:', crsId, projectionDefsEndpoint);
                                     onSelectEndpointProjection(projectionDefsEndpoint, crsId);
                                     // TODO after loading the definition, should we also add it to the projectionList for quick switching, or just make it available without adding to the list?

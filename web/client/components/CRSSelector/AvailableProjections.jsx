@@ -235,12 +235,6 @@ const AvailableProjections = ({
                             {!searchLoading && filterTextRemote && (
                                 <ProjectionListRemote
                                     searchResults={searchResultsRemote}
-                                    // projectionList={currentProjectionList}
-                                    // setConfig={({ projectionList: updatedList }) => {
-                                    //     if (updatedList) {
-                                    //         setCurrentProjectionList(updatedList);
-                                    //     }
-                                    // }}
                                     onSelectRemoteCrs={onSelectRemoteCrs}
                                 />
                             )}
