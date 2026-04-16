@@ -590,7 +590,7 @@
       {
         "name": "CRSSelector",
         "cfg": {
-          "projectionDefsEndpoint": "https://development.demo.geonode.org/geoserver/rest/crs",
+          "projectionDefsEndpoint": "https://opengeo.tech/geoserver",
           "allowedRoles": ["ADMIN"],
           "availableProjections": [
             { "value": "EPSG:4326", "label": "EPSG:4326" },

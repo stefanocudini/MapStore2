@@ -3,8 +3,19 @@ import FlexBox from '../layout/FlexBox';
 import Message from '../I18N/Message';
 import { FormControl, Glyphicon } from 'react-bootstrap';
 import tooltip from '../misc/enhancers/tooltip';
+import { isString } from 'lodash';
 
 const GlyphiconWithTooltip = tooltip(Glyphicon);
+
+export const formatCRSItem = function(item) {
+    const { id, href, label } = item;
+    const finalId = id.toLowerCase().replace(':', '');
+    // example of href= "href": "https://development.demo.geonode.org/geoserver/rest/crs/EPSG:2000.wkt"
+
+    const finalLabel = label && isString(label) && label.trim() ? label : href.split('/').pop().replace('.', ' ');
+    const finalValue = id.toUpperCase();
+    return { id: finalId, value: finalValue, label: finalLabel };
+};
 
 export const ProjectionList = ({
     filteredProjections,
@@ -87,7 +98,11 @@ export const ProjectionList = ({
     );
 };
 
-export const ProjectionListRemote = ({ searchResults, projectionList, setConfig }) => {
+export const ProjectionListRemote = ({
+    searchResults,
+    projectionList,
+    setConfig
+}) => {
     const projectionListValues = useMemo(() => projectionList.map(p => p.value), [projectionList]);
     return (
         <>
@@ -99,41 +114,36 @@ export const ProjectionListRemote = ({ searchResults, projectionList, setConfig 
                         tooltipPosition="top"
                     />
                 </div>
-                <div><Message msgId="crsSelector.label" /></div>
+                {/* TODO enable when enabled in backend <div><Message msgId="crsSelector.label" /></div> */}
                 <div><Message msgId="crsSelector.authorityId" /></div>
                 <div className="ms-selected-projection" />
             </FlexBox>
-            { Array.isArray(searchResults) && searchResults.map(({ label, value }) => {
+            { Array.isArray(searchResults) && searchResults.map((crsItem) => {
+                // TODO ask to backend to return also label in list endpoint
+                const { id, value, label } = formatCRSItem(crsItem);
                 return (
                     <FlexBox
-                        key={value}
+                        key={id}
                         centerChildrenVertically
                         gap="sm"
                         classNames="ms-crs-projection-item"
-                        onClick={() => {
-                            setConfig({
-                                defaultCrs: value,
-                                projectionList: projectionListValues.includes(value)
-                                    ? projectionList
-                                    : [...projectionList, { value, label }]
-                            });
-                        }}
                     >
                         <div className="ms-selected-projection">
                             <FormControl
                                 type="checkbox"
+                                value={value}
                                 onClick={(event) => event.stopPropagation()}
-                                onChange={(event) => {
+                                onChange={({target}) => {
+                                    const targetValue = target.value.toUpperCase();
                                     setConfig({
-                                        projectionList: event.target.checked
-                                            ? [...projectionList, { value, label }]
-                                            : projectionList.filter(c => c.value !== value)
+                                        projectionList: target.checked
+                                            ? [...projectionList, { value: targetValue, label: targetValue }]
+                                            : projectionList.filter(c => c.value !== targetValue)
                                     });
                                 }}
                             />
                         </div>
                         <div>{label}</div>
-                        <div>{value}</div>
                     </FlexBox>
                 );
             })}
