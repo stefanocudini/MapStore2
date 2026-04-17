@@ -68,7 +68,8 @@ const AvailableProjections = ({
     }, [currentProjectionList, currentSelectedProjection]);
 
     const projectionsList = useMemo(() => {
-        return getAvailableProjections(projectionList, projectionDefs);
+        const ava = getAvailableProjections(projectionList, projectionDefs);
+        return ava;
     }, [projectionList, projectionDefs]);
 
     // Filter projections based on filterText

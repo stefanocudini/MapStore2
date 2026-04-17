@@ -255,7 +255,6 @@ const Selector = ({
                                 projectionDefs={projectionDefs}
                                 selectedProjectionList={list}
                                 searchResultsRemote={searchResultsRemote}
-                                projectionDefsEndpoint={projectionDefsEndpoint}
                                 onSearchRemote={(query, page = 1) => {
                                     onSearchRemote(projectionDefsEndpoint, query, page);
                                 }}

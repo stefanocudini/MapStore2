@@ -8,7 +8,11 @@
 
 import Rx from 'rxjs';
 
-import { searchProjections, getProjectionDef } from '../api/GeoServerProjections';
+import {
+    searchProjections,
+    getProjectionDef
+} from '../api/GeoServerProjections';
+
 import {
     SEARCH_PROJECTIONS,
     LOAD_PROJECTION_DEF,
@@ -64,7 +68,12 @@ export const loadProjectionDefEpic = (action$) =>
         .mergeMap(({ endpointUrl, id }) => {
             return Rx.Observable.defer(() => getProjectionDef(endpointUrl, id))
                 .map((result) => {
-                    return addProjectionDef({ code: result.code, def: result.def });
+                    return addProjectionDef({
+                        code: result.code,
+                        def: result.def,
+                        extent: result.extent,
+                        worldExtent: result.worldExtent
+                    });
                 })
                 .catch((error) => {
                     return Rx.Observable.of(loadProjectionDefError(id, error.message));
