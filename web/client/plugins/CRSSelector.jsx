@@ -112,7 +112,7 @@ const Selector = ({
     setConfig = () => {},
     searchResultsRemote,
     onSearchRemote = () => {},
-    onSelectEndpointProjection = () => {},
+    onLoadProjectionDef = () => {},
     currentBackground,
     onError = () => {},
     canEditProjection = true
@@ -258,17 +258,8 @@ const Selector = ({
                                 onSearchRemote={(query, page = 1) => {
                                     onSearchRemote(projectionDefsEndpoint, query, page);
                                 }}
-                                onSelectRemoteCrs={(crsId) => {
-                                    // eslint-disable-next-line no-console
-                                    console.log('onSelectRemoteCrs:', crsId, projectionDefsEndpoint);
-                                    onSelectEndpointProjection(projectionDefsEndpoint, crsId);
-                                    // TODO after loading the definition, should we also add it to the projectionList for quick switching, or just make it available without adding to the list?
-                                    // if adding to the list, need to decide on label (endpoint doesn't return one) and handle duplicates if user selects multiple times from search results
-                                    const newCrs = { value: crsId, label: crsId };
-                                    const updatedList = [...list, newCrs];
-                                    setConfig({
-                                        projectionList: updatedList
-                                    });
+                                onLoadProjectionDef={(crsId) => {
+                                    onLoadProjectionDef(projectionDefsEndpoint, crsId);
                                 }}
                             />
                         </Suspense>
@@ -347,7 +338,7 @@ const crsSelector = connect(
         // New actions connected:
         onSearchRemote: searchProjections,          // signature: (endpointUrl, query, page) - page=1 resets, page>1 appends
         onClearSearch: clearProjectionSearch,
-        onSelectEndpointProjection: loadProjectionDef
+        onLoadProjectionDef: loadProjectionDef
     },
     (stateProps, dispatchProps, ownProps) => {
         const { pluginCfg, ...otherProps } = ownProps || {};
@@ -360,7 +351,6 @@ const crsSelector = connect(
             ...dispatchProps,
             ...(pluginCfg || {}),
             projectionDefsEndpoint,
-            // onSelectEndpointProjection: loadProjectionDef,
             availableProjections
         };
     }

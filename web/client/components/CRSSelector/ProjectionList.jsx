@@ -8,9 +8,8 @@ import { isString } from 'lodash';
 const GlyphiconWithTooltip = tooltip(Glyphicon);
 
 export const formatCRSItem = function(item) {
-    const { id, href, label } = item;
+    const { id, label } = item;
     const key = id.toLowerCase().replace(':', '');
-    // sample of href: "href": "https://development.demo.geonode.org/geoserver/rest/crs/EPSG:2000.wkt"
     const finalLabel = label && isString(label) && label.trim() ? label : id;
     const finalValue = id.toUpperCase();
     return { key, value: finalValue, label: finalLabel };
@@ -101,6 +100,7 @@ export const ProjectionList = ({
 export const ProjectionListRemote = ({
     searchResults,
     projectionList,
+    onLoadProjectionDef,
     setConfig
 }) => {
     const projectionListValues = useMemo(() => projectionList.map(p => p.value), [projectionList]);
@@ -120,7 +120,7 @@ export const ProjectionListRemote = ({
             </FlexBox>
             <div className="ms-crs-projections-results">
                 { Array.isArray(searchResults) && searchResults.map((crsItem) => {
-                // TODO ask to backend to return also label in list endpoint
+                    // TODO ask to backend to return also label in list endpoint
                     const { key, value, label } = formatCRSItem(crsItem);
                     const isSelected = projectionListValues.includes(value);
                     return (
@@ -138,6 +138,7 @@ export const ProjectionListRemote = ({
                                     onClick={(event) => event.stopPropagation()}
                                     onChange={({target}) => {
                                         const targetValue = target.value.toUpperCase();
+                                        onLoadProjectionDef(targetValue); // load definition wkt from geoserver rest
                                         setConfig({
                                             projectionList: target.checked
                                                 ? [...projectionList, { value: targetValue, label: targetValue }]

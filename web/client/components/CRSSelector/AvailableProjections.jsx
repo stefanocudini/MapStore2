@@ -32,7 +32,8 @@ const AvailableProjections = ({
     selectedProjectionList,
     searchLoading,
     searchResultsRemote,
-    onSearchRemote
+    onSearchRemote,
+    onLoadProjectionDef
 }, context) => {
 
     const [filterText, setFilterText] = useState('');
@@ -236,6 +237,7 @@ const AvailableProjections = ({
                                 <ProjectionListRemote
                                     projectionList={currentProjectionList}
                                     searchResults={searchResultsRemote}
+                                    onLoadProjectionDef={onLoadProjectionDef}
                                     setConfig={({ defaultCrs, projectionList: updatedList }) => {
                                         if (updatedList) {
                                             setCurrentProjectionList(updatedList);
