@@ -138,7 +138,9 @@ export const ProjectionListRemote = ({
                                     onClick={(event) => event.stopPropagation()}
                                     onChange={({target}) => {
                                         const targetValue = target.value.toUpperCase();
-                                        onLoadProjectionDef(targetValue); // load definition wkt from geoserver rest
+                                        if (target.checked) {
+                                            onLoadProjectionDef(targetValue); // load definition wkt from geoserver rest
+                                        }
                                         setConfig({
                                             projectionList: target.checked
                                                 ? [...projectionList, { value: targetValue, label: targetValue }]
