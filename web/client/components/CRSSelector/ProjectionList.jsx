@@ -63,11 +63,12 @@ export const ProjectionList = ({
                                 type="checkbox"
                                 checked={isSelected}
                                 onClick={(event) => event.stopPropagation()}
-                                onChange={(event) => {
+                                onChange={({target}) => {
+                                    const targetValue = target.value.toUpperCase();
                                     setConfig({
-                                        projectionList: event.target.checked
-                                            ? [...projectionList, { value, label }]
-                                            : projectionList.filter(c => c.value !== value)
+                                        projectionList: target.checked
+                                            ? [...projectionList, { value: targetValue, label }]
+                                            : projectionList.filter(c => c.value !== targetValue)
                                     });
                                 }}
                             />
@@ -99,10 +100,10 @@ export const ProjectionList = ({
 
 export const ProjectionListRemote = ({
     searchResults,
-    // projectionList,
-    // setConfig
-    onSelectRemoteCrs = () => {}
+    projectionList,
+    setConfig
 }) => {
+    const projectionListValues = useMemo(() => projectionList.map(p => p.value), [projectionList]);
     return (
         <div>
             <FlexBox centerChildrenVertically gap="sm" className="ms-crs-projections-header">
@@ -121,6 +122,7 @@ export const ProjectionListRemote = ({
                 { Array.isArray(searchResults) && searchResults.map((crsItem) => {
                 // TODO ask to backend to return also label in list endpoint
                     const { key, value, label } = formatCRSItem(crsItem);
+                    const isSelected = projectionListValues.includes(value);
                     return (
                         <FlexBox
                             key={key}
@@ -131,16 +133,16 @@ export const ProjectionListRemote = ({
                             <div className="ms-selected-projection">
                                 <FormControl
                                     type="checkbox"
+                                    checked={isSelected}
                                     value={value}
                                     onClick={(event) => event.stopPropagation()}
                                     onChange={({target}) => {
                                         const targetValue = target.value.toUpperCase();
-                                        // setConfig({
-                                        //     projectionList: target.checked
-                                        //         ? [...projectionList, { value: targetValue, label: targetValue }]
-                                        //         : projectionList.filter(c => c.value !== targetValue)
-                                        // });
-                                        onSelectRemoteCrs(targetValue);
+                                        setConfig({
+                                            projectionList: target.checked
+                                                ? [...projectionList, { value: targetValue, label: targetValue }]
+                                                : projectionList.filter(c => c.value !== targetValue)
+                                        });
                                     }}
                                 />
                             </div>

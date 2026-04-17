@@ -32,8 +32,7 @@ const AvailableProjections = ({
     selectedProjectionList,
     searchLoading,
     searchResultsRemote,
-    onSearchRemote,
-    onSelectRemoteCrs
+    onSearchRemote
 }, context) => {
 
     const [filterText, setFilterText] = useState('');
@@ -235,8 +234,16 @@ const AvailableProjections = ({
                             )}
                             {!searchLoading && filterTextRemote && (
                                 <ProjectionListRemote
+                                    projectionList={currentProjectionList}
                                     searchResults={searchResultsRemote}
-                                    onSelectRemoteCrs={onSelectRemoteCrs}
+                                    setConfig={({ defaultCrs, projectionList: updatedList }) => {
+                                        if (updatedList) {
+                                            setCurrentProjectionList(updatedList);
+                                        }
+                                        if (defaultCrs) {
+                                            setCurrentSelectedProjection(defaultCrs);
+                                        }
+                                    }}
                                 />
                             )}
                         </FormGroup>
@@ -276,8 +283,7 @@ AvailableProjections.propTypes = {
     searchLoading: PropTypes.bool,  // from projectionSearchLoadingSelector
     searchTotal: PropTypes.number,  // from projectionSearchTotalSelector
     onSearchRemote: PropTypes.func,       // dispatches searchProjections; page=1 for new queries, page=N for load more
-    onClearSearch: PropTypes.func,   // dispatches clearProjectionSearch()
-    onSelectRemoteCrs: PropTypes.func // dispatches loadProjectionDef for the selected projection id
+    onClearSearch: PropTypes.func   // dispatches clearProjectionSearch()
 };
 
 AvailableProjections.defaultProps = {
@@ -291,8 +297,7 @@ AvailableProjections.defaultProps = {
     searchLoading: false,
     searchTotal: 0,
     onSearchRemote: () => {},
-    onClearSearch: () => {},
-    onSelectRemoteCrs: () => {}
+    onClearSearch: () => {}
 };
 
 export default AvailableProjections;
