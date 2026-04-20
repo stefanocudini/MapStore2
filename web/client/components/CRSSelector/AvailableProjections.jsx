@@ -75,14 +75,16 @@ const AvailableProjections = ({
     // Filter projections based on filterText
     const filteredProjections = useMemo(() => {
         if (!filterText.trim()) {
-            return projectionsList;
+            // OLD CODE
+            //  return projectionsList;
+            return currentProjectionList;
         }
         const searchText = filterText.toLowerCase();
         return projectionsList.filter(({ label, value }) =>
             label.toLowerCase().includes(searchText) ||
             value.toLowerCase().includes(searchText)
         );
-    }, [projectionsList, filterText]);
+    }, [projectionsList, filterText, currentProjectionList]);
 
     const map = useMemo(() => ({
         mapInfoControl: true,
