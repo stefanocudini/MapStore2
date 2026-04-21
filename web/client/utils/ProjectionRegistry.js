@@ -53,7 +53,7 @@ function toDef(def) {
 }
 
 export function register(projDef) {
-    const { code, def, extent, worldExtent, axisOrientation, units } = projDef;
+    const { code, def, extent, worldExtent } = projDef;
     if (!code) {
         return;
     }
@@ -63,8 +63,20 @@ export function register(projDef) {
     if (supported) {
         proj4.defs(code, normalizedDef);
     }
+    const proj4Metadata = proj4.defs(code);
 
-    const entry = { code, def: normalizedDef, extent, worldExtent, axisOrientation, units, supported };
+    const axisOrientation = projDef.axisOrientation || proj4Metadata.axis || 'enu';
+    const units = projDef.units || proj4Metadata.units || 'm';
+
+    const entry = {
+        code,
+        def: normalizedDef,
+        extent,
+        worldExtent,
+        axisOrientation,
+        units,
+        supported
+    };
     registry.set(code, entry);
 
     // Notify all map-library adapters

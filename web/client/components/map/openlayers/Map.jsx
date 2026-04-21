@@ -96,23 +96,29 @@ class OpenlayersMap extends React.Component {
     };
 
     componentDidMount() {
+
+        // !!!!!!!!!!TODO maintain this code in global registry
+
         // adding EPSG:4269, by default included in proj4 definitions,
         // so that we have extents needed by ol
-        const defs = [{
-            "code": "EPSG:4269",
-            "def": "+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs",
-            "axisOrientation": "neu",
-            "extent": [-172.54, 23.81, -47.74, 86.46],
-            "worldExtent": [-172.54, 23.81, -47.74, 86.46]
-        }, ...this.props.projectionDefs];
-        defs.forEach(p => {
-            const projDef = proj4.defs(p.code);
-            projUtils.addProjections(p.code, p.extent, p.worldExtent, p.axisOrientation || projDef.axis || 'enu', projDef.units || 'm');
-        });
-        // It may be a good idea to check if CoordinateUtils also registered the projectionDefs
-        // normally it happens ad application level.
+        // const defs = [{
+        //     "code": "EPSG:4269",
+        //     "def": "+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs",
+        //     "axisOrientation": "neu",
+        //     "extent": [-172.54, 23.81, -47.74, 86.46],
+        //     "worldExtent": [-172.54, 23.81, -47.74, 86.46]
+        // }, ...this.props.projectionDefs];
+        // defs.forEach(p => {
+        //     const projDef = proj4.defs(p.code);
+        //     projUtils.addProjections(p.code, p.extent, p.worldExtent, p.axisOrientation || projDef.axis || 'enu', projDef.units || 'm');
+        // });
+        // // It may be a good idea to check if CoordinateUtils also registered the projectionDefs
+        // // normally it happens ad application level.
+        // register(proj4);
+
+        projUtils.initOLProjectionAdapter();
+
         let center = reproject([this.props.center.x, this.props.center.y], 'EPSG:4326', this.props.projection);
-        register(proj4);
         // interactive flag is used only for initializations,
         // TODO manage it also when it changes status (ComponentWillReceiveProps)
         let interactionsOptions = Object.assign(
