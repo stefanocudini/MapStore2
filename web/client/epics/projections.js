@@ -49,7 +49,7 @@ export const searchProjectionsEpic = (action$) =>
             if (!endpointUrl) {
                 return Rx.Observable.empty();
             }
-            return Rx.Observable.defer(() => searchProjections(endpointUrl, null, query, page))
+            return Rx.Observable.defer(() => searchProjections(endpointUrl, query, page))
                 .map(({ results, total }) => {
                     return searchProjectionsSuccess(results, total, page);
                 })

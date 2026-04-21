@@ -9,7 +9,7 @@
 import axios from '../libs/ajax';
 
 const DEFAULT_LIMIT = 10; // kept low for the search panel; endpoint allows up to 200
-
+const DEFAULT_PAGE = 1;
 
 /**
  * convert bboxes object in array format, suitable for MapStore and OpenLayers
@@ -39,14 +39,13 @@ export function formatCrsExtents({bbox, bboxWGS84}) {
     };
 }
 
-export function searchProjections(endpointUrl, authority = 'EPSG', query, page = 1, limit = DEFAULT_LIMIT) {
-    // TODO move on default configuration or edit backend endpoint
+export function searchProjections(endpointUrl, query, page = DEFAULT_PAGE, limit = DEFAULT_LIMIT, authority = 'EPSG') {
 
     return axios.get(`${endpointUrl}/rest/crs`, {
         params: {
             ...(query ? { q: query } : {}),  // planned additional param - omit if absent
-            authority,
-            offset: (page - 1) * limit,
+            ...(authority ? { authority } : {}),
+            // offset: (page - 1) * limit, // ignore per now
             limit
         }
     }).then((res) => {

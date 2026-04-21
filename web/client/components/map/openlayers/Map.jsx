@@ -26,6 +26,9 @@ import mapUtils, { isNearlyEqual, getResolutionsForProjection } from '../../../u
 import projUtils from '../../../utils/openlayers/projUtils';
 import { DEFAULT_INTERACTION_OPTIONS } from '../../../utils/openlayers/DrawUtils';
 
+
+import ProjectionRegistry from '../../../utils/ProjectionRegistry';
+
 import {isEqual, find, throttle, isArray, isNil} from 'lodash';
 
 import GeoTIFF from 'ol/source/GeoTIFF.js';
@@ -97,8 +100,7 @@ class OpenlayersMap extends React.Component {
 
     componentDidMount() {
 
-        // !!!!!!!!!!TODO maintain this code in global registry
-
+        // OLD CODE
         // adding EPSG:4269, by default included in proj4 definitions,
         // so that we have extents needed by ol
         // const defs = [{
@@ -115,6 +117,14 @@ class OpenlayersMap extends React.Component {
         // // It may be a good idea to check if CoordinateUtils also registered the projectionDefs
         // // normally it happens ad application level.
         // register(proj4);
+
+        ProjectionRegistry.register({
+            "code": "EPSG:4269",
+            "def": "+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs",
+            "axisOrientation": "neu",
+            "extent": [-172.54, 23.81, -47.74, 86.46],
+            "worldExtent": [-172.54, 23.81, -47.74, 86.46]
+        });
 
         projUtils.initOLProjectionAdapter();
 
