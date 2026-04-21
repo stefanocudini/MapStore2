@@ -8,7 +8,7 @@
 
 import axios from '../libs/ajax';
 
-const DEFAULT_LIMIT = 10; // kept low for the search panel; endpoint allows up to 200
+const DEFAULT_LIMIT = 200; // kept low for the search panel; endpoint allows up to 200
 const DEFAULT_PAGE = 1;
 
 /**

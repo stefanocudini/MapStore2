@@ -65,8 +65,8 @@ export function register(projDef) {
     }
     const proj4Metadata = proj4.defs(code);
 
-    const axisOrientation = projDef.axisOrientation || proj4Metadata.axis || 'enu';
-    const units = projDef.units || proj4Metadata.units || 'm';
+    const axisOrientation = projDef?.axisOrientation || proj4Metadata?.axis || 'enu';
+    const units = projDef?.units || proj4Metadata?.units || 'm';
 
     const entry = {
         code,

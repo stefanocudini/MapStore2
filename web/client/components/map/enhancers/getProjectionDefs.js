@@ -25,7 +25,6 @@ import { getAll } from '../../../utils/ProjectionRegistry';
 //     })
 // );
 
-
 export function useProjectionDefs(projectionDefs) {
     if (isArray(projectionDefs) && projectionDefs.length) {
         return projectionDefs;

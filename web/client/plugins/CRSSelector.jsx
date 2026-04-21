@@ -257,7 +257,8 @@ const Selector = ({
                                 selectedProjectionList={list}
                                 searchResultsRemote={searchResultsRemote}
                                 onSearchRemote={(query, page = 1) => {
-                                    onSearchRemote(projectionDefsEndpoint, projectionDefsEndpointAuthority, query, page);
+                                    // searchProjections(endpointUrl, query, page = DEFAULT_PAGE, limit = DEFAULT_LIMIT, authority = 'EPSG') { //TODO pass limit in config
+                                    onSearchRemote(projectionDefsEndpoint, query, page, undefined, projectionDefsEndpointAuthority);
                                 }}
                                 onLoadProjectionDef={(crsId) => {
                                     onLoadProjectionDef(projectionDefsEndpoint, crsId);
