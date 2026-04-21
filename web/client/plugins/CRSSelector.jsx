@@ -103,6 +103,7 @@ const Selector = ({
     projectionDefs,
     availableProjections,
     projectionDefsEndpoint,
+    projectionDefsEndpointAuthority,
     setCrs = () => {},
     typeInput = () => {},
     enabled = true,
@@ -256,7 +257,7 @@ const Selector = ({
                                 selectedProjectionList={list}
                                 searchResultsRemote={searchResultsRemote}
                                 onSearchRemote={(query, page = 1) => {
-                                    onSearchRemote(projectionDefsEndpoint, query, page);
+                                    onSearchRemote(projectionDefsEndpoint, projectionDefsEndpointAuthority, query, page);
                                 }}
                                 onLoadProjectionDef={(crsId) => {
                                     onLoadProjectionDef(projectionDefsEndpoint, crsId);
@@ -284,6 +285,7 @@ Selector.propTypes = {
     currentRole: PropTypes.string,
     availableProjections: PropTypes.array,
     projectionDefsEndpoint: PropTypes.string,
+    projectionDefsEndpointAuthority: PropTypes.string,
     projectionsConfig: PropTypes.object,
     setConfig: PropTypes.func,
     canEditProjection: PropTypes.bool,
@@ -345,12 +347,14 @@ const crsSelector = connect(
         const { filterAllowedCRS = [], additionalCRS = {} } = pluginCfg || {};
         const availableProjections = pluginCfg?.availableProjections || getAvailableProjectionsFromConfig(filterAllowedCRS, additionalCRS);
         const projectionDefsEndpoint = pluginCfg?.projectionDefsEndpoint;
+        const projectionDefsEndpointAuthority = pluginCfg?.projectionDefsEndpointAuthority || "EPSG";
         return {
             ...otherProps,
             ...stateProps,
             ...dispatchProps,
             ...(pluginCfg || {}),
             projectionDefsEndpoint,
+            projectionDefsEndpointAuthority,
             availableProjections
         };
     }
@@ -369,7 +373,8 @@ const crsSelector = connect(
   *
   * @prop {string[]} cfg.filterAllowedCRS (deprecated) list of allowed crs in the combobox list to used as filter for the one of retrieved proj4.defs()
   * @prop {object} cfg.additionalCRS (deprecated) additional crs added to the list. The label param is used after in the combobox.
-  * @prop {string} cfg.endpointUrl (optional) if provided, the plugin will fetch available projections from this endpoint.
+  * @prop {string} cfg.projectionDefsEndpoint (optional) if provided, the plugin will fetch available projections from this endpoint.
+  * @prop {string} cfg.projectionDefsEndpointAuthority (optional) if provided, the plugin will use this authority for the projections endpoint.
   *
   * @example
   * // If you want to add some crs you need to provide a definition and adding it in the additionalCRS property
@@ -386,7 +391,8 @@ const crsSelector = connect(
   * // And configure the new projection for the plugin as below:
   * { "name": "CRSSelector",
   *   "cfg": {
-  *     "endpointUrl": "https://example.com/geoserver/rest/crs",
+  *     "projectionDefsEndpoint": "https://example.com/geoserver/rest/crs",
+  *     "projectionDefsEndpointAuthority": "EPSG",
   *     "availableProjections": [
   *       { "value": "EPSG:4326", "label": "EPSG:4326" },
   *       { "value": "EPSG:3857", "label": "EPSG:3857" },

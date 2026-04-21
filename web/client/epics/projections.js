@@ -37,7 +37,7 @@ import ProjectionRegistry from '../utils/ProjectionRegistry';
  */
 export const searchProjectionsEpic = (action$) =>
     action$.ofType(SEARCH_PROJECTIONS)
-        // debounce only for page 1 (new query); page changes are intentional and immediate
+
         .debounce(({ page }) => {
             if (page === 1) {
                 return Rx.Observable.timer(300);
@@ -45,11 +45,11 @@ export const searchProjectionsEpic = (action$) =>
             return Rx.Observable.empty();
         })
         .switchMap(({ endpointUrl, query, page }) => {
-            // console.log('searchProjectionsEpic', { endpointUrl, query, page });
+
             if (!endpointUrl) {
                 return Rx.Observable.empty();
             }
-            return Rx.Observable.defer(() => searchProjections(endpointUrl, query, page))
+            return Rx.Observable.defer(() => searchProjections(endpointUrl, null, query, page))
                 .map(({ results, total }) => {
                     return searchProjectionsSuccess(results, total, page);
                 })

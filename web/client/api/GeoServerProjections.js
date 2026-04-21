@@ -39,11 +39,13 @@ export function formatCrsExtents({bbox, bboxWGS84}) {
     };
 }
 
+export function searchProjections(endpointUrl, authority = 'EPSG', query, page = 1, limit = DEFAULT_LIMIT) {
+    // TODO move on default configuration or edit backend endpoint
 
-export function searchProjections(endpointUrl, query, page = 1, limit = DEFAULT_LIMIT) {
     return axios.get(`${endpointUrl}/rest/crs`, {
         params: {
             ...(query ? { q: query } : {}),  // planned additional param - omit if absent
+            authority,
             offset: (page - 1) * limit,
             limit
         }
