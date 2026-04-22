@@ -142,8 +142,6 @@ class OpenlayersMap extends React.Component {
         // };
         ProjectionRegistry.registerAll([
             def4269,
-            // def4326,
-            // def3857,
             ...this.props.projectionDefs
         ]).then(() => {
 

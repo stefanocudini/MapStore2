@@ -62,12 +62,11 @@ export const ProjectionList = ({
                                 type="checkbox"
                                 checked={isSelected}
                                 onClick={(event) => event.stopPropagation()}
-                                onChange={({target}) => {
-                                    const targetValue = target.value.toUpperCase();
+                                onChange={(event) => {
                                     setConfig({
-                                        projectionList: target.checked
-                                            ? [...projectionList, { value: targetValue, label }]
-                                            : projectionList.filter(c => c.value !== targetValue)
+                                        projectionList: event.target.checked
+                                            ? [...projectionList, { value, label }]
+                                            : projectionList.filter(c => c.value !== value)
                                     });
                                 }}
                             />
