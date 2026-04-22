@@ -43,7 +43,7 @@ export function searchProjections(endpointUrl, query, page = DEFAULT_PAGE, limit
 
     return axios.get(`${endpointUrl}/rest/crs`, {
         params: {
-            ...(query ? { q: query } : {}),  // planned additional param - omit if absent
+            ...(query ? { query } : {}),
             ...(authority ? { authority } : {}),
             // offset: (page - 1) * limit, // ignore per now
             limit
