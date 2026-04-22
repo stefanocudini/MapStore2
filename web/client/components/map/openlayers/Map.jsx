@@ -118,15 +118,37 @@ class OpenlayersMap extends React.Component {
         // // normally it happens ad application level.
         // register(proj4);
 
-        ProjectionRegistry.register({
+        const def4269 = {
             "code": "EPSG:4269",
             "def": "+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs",
             "axisOrientation": "neu",
             "extent": [-172.54, 23.81, -47.74, 86.46],
             "worldExtent": [-172.54, 23.81, -47.74, 86.46]
-        });
+        };
 
-        projUtils.initOLProjectionAdapter();
+        // const def4326 = {
+        //     "code": "EPSG:4326",
+        //     "def": "+proj=longlat +datum=WGS84 +no_defs +type=crs",
+        //     "axisOrientation": "neu",
+        //     "extent": [-180, -90, 180, 90],
+        //     "worldExtent": [-180, -90, 180, 90]
+        // };
+        // const def3857 = {
+        //     "code": "EPSG:3857",
+        //     "def": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +k=1 +units=m +nadgrids=@null +wktext +no_defs +type=crs",
+        //     "axisOrientation": "enu",
+        //     "extent": [-20037508.342789244, -20037508.342789244, 20037508.342789244, 20037508.342789244],
+        //     "worldExtent": [-180, -85.06, 180, 85.06]
+        // };
+        ProjectionRegistry.registerAll([
+            def4269,
+            // def4326,
+            // def3857,
+            ...this.props.projectionDefs
+        ]).then(() => {
+
+            projUtils.initOLProjectionAdapter();
+        });
 
         let center = reproject([this.props.center.x, this.props.center.y], 'EPSG:4326', this.props.projection);
         // interactive flag is used only for initializations,

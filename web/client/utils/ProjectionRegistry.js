@@ -136,4 +136,6 @@ const ProjectionRegistry = {
     isRegistered
 };
 
+window.ProjectionRegistry = ProjectionRegistry; // for debugging and external use - not required for internal functionality
+
 export default ProjectionRegistry;

@@ -163,6 +163,7 @@ const AvailableProjections = ({
                 draggable={false}
                 modal
                 containerClassName="crs-available-projections-dialog-container"
+                style={{ marginTop: '50px' }}
             >
                 <FlexBox role="header" centerChildrenVertically gap="sm" classNames={['_flex-space-between']}>
                     <FlexBox centerChildrenVertically gap="sm">
