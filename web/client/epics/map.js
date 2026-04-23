@@ -100,6 +100,7 @@ export const resetLimitsOnInit = (action$, store) =>
             return Rx.Observable.of(changeMapLimits({ restrictedExtent, crs: confExtentCrs, minZoom}));
         });
 
+
 export const resetMapOnInit = action$ =>
     action$.ofType(INIT_MAP).switchMap(() => Rx.Observable.of(
         removeAllAdditionalLayers(),
