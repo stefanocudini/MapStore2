@@ -101,8 +101,6 @@ class OpenlayersMap extends React.Component {
     componentDidMount() {
 
         // OLD CODE
-        // adding EPSG:4269, by default included in proj4 definitions,
-        // so that we have extents needed by ol
         // const defs = [{
         //     "code": "EPSG:4269",
         //     "def": "+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs",
@@ -118,7 +116,11 @@ class OpenlayersMap extends React.Component {
         // // normally it happens ad application level.
         // register(proj4);
 
-        const def4269 = {
+        /*
+          adding EPSG:4269, by default included in proj4 definitions,
+          so that we have extents needed by ol
+        */
+        const crs4269 = {
             "code": "EPSG:4269",
             "def": "+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs",
             "axisOrientation": "neu",
@@ -126,25 +128,10 @@ class OpenlayersMap extends React.Component {
             "worldExtent": [-172.54, 23.81, -47.74, 86.46]
         };
 
-        // const def4326 = {
-        //     "code": "EPSG:4326",
-        //     "def": "+proj=longlat +datum=WGS84 +no_defs +type=crs",
-        //     "axisOrientation": "neu",
-        //     "extent": [-180, -90, 180, 90],
-        //     "worldExtent": [-180, -90, 180, 90]
-        // };
-        // const def3857 = {
-        //     "code": "EPSG:3857",
-        //     "def": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +k=1 +units=m +nadgrids=@null +wktext +no_defs +type=crs",
-        //     "axisOrientation": "enu",
-        //     "extent": [-20037508.342789244, -20037508.342789244, 20037508.342789244, 20037508.342789244],
-        //     "worldExtent": [-180, -85.06, 180, 85.06]
-        // };
         ProjectionRegistry.registerAll([
-            def4269,
+            crs4269,
             ...this.props.projectionDefs
         ]).then(() => {
-
             projUtils.initOLProjectionAdapter();
         });
 
