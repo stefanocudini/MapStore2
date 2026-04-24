@@ -19,7 +19,7 @@ const FORMAT = {
     UNKNOWN: 'unknown'
 };
 
-function detectFormat(def) {
+export function detectFormat(def) {
     if (!def || typeof def !== 'string') {
         return FORMAT.UNKNOWN;
     }
@@ -36,7 +36,7 @@ function detectFormat(def) {
     return FORMAT.UNKNOWN;
 }
 
-function toDef(def) {
+export function toDef(def) {
     const format = detectFormat(def);
     if (format === FORMAT.PROJ4 || format === FORMAT.WKT1) {
         // proj4js handles both natively
@@ -83,6 +83,18 @@ export function register(projDef) {
     listeners.forEach(fn => fn(entry));
 }
 
+export function unRegister(code) {
+    if (registry.has(code)) {
+        registry.delete(code);
+        // Note: proj4js does not support un-defining a projection once defined, so we do not attempt to do that here
+    }
+}
+
+export function unRegisterAll() {
+    registry.clear();
+    // Note: proj4js does not support un-defining projections once defined, so we do not attempt to do that here
+}
+
 export function registerAll(projDefs = []) {
     // Returns a Promise so callers can chain .then() - for plain defs this resolves immediately via Promise.resolve
     projDefs.forEach(register);
@@ -118,12 +130,13 @@ export function getAll() {
     return Array.from(registry.values());
 }
 
-export function get(code) {
+export function getByCode(code) {
     return registry.get(code) ?? null;
 }
 
 export function isRegistered(code) {
-    return registry.has(code);
+    const has = registry.has(code);
+    return has;
 }
 
 const ProjectionRegistry = {
@@ -132,8 +145,10 @@ const ProjectionRegistry = {
     registerAllWithGridFiles,
     onRegister,
     getAll,
-    get,
-    isRegistered
+    getByCode,
+    isRegistered,
+    unRegister,
+    unRegisterAll
 };
 
 window.ProjectionRegistry = ProjectionRegistry; // for debugging and external use - not required for internal functionality

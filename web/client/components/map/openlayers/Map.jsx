@@ -14,8 +14,6 @@ import { get as getProjection, toLonLat } from 'ol/proj';
 import Zoom from 'ol/control/Zoom';
 import GeoJSON from 'ol/format/GeoJSON';
 
-import proj4 from 'proj4';
-import { register } from 'ol/proj/proj4.js';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -127,9 +125,24 @@ class OpenlayersMap extends React.Component {
             "extent": [-172.54, 23.81, -47.74, 86.46],
             "worldExtent": [-172.54, 23.81, -47.74, 86.46]
         };
-
+        const def4326 = {
+            "code": "EPSG:4326",
+            "def": "+proj=longlat +datum=WGS84 +no_defs +type=crs",
+            "axisOrientation": "neu",
+            "extent": [-180, -90, 180, 90],
+            "worldExtent": [-180, -90, 180, 90]
+        };
+        const def3857 = {
+            "code": "EPSG:3857",
+            "def": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +k=1 +units=m +nadgrids=@null +wktext +no_defs +type=crs",
+            "axisOrientation": "enu",
+            "extent": [-20037508.342789244, -20037508.342789244, 20037508.342789244, 20037508.342789244],
+            "worldExtent": [-180, -85.06, 180, 85.06]
+        };
         ProjectionRegistry.registerAll([
             crs4269,
+            def4326,
+            def3857,
             ...this.props.projectionDefs
         ]).then(() => {
             projUtils.initOLProjectionAdapter();
@@ -342,6 +355,9 @@ class OpenlayersMap extends React.Component {
                 let closestMatchedZoom = newProps.zoom;
                 const projectionChanged = this.props.projection !== newProps.projection;
                 if (projectionChanged) {
+                    // using msGetProjection crs selector map preview breaks
+                    // const currentProjection = msGetProjection(this.props.projection);
+                    // const nextProjection = msGetProjection(mapProjection);
                     const currentProjection = getProjection(this.props.projection);
                     const nextProjection = getProjection(mapProjection);
                     const currentResolution = Number.isFinite(this.props.resolution)
@@ -408,8 +424,8 @@ class OpenlayersMap extends React.Component {
         if (this.props.mapOptions && this.props.mapOptions.view && this.props.mapOptions.view.resolutions) {
             return this.props.mapOptions.view.resolutions;
         }
-        const projection = srs ? getProjection(srs) : this.map.getView().getProjection();
-        const extent = projection.getExtent();
+        const projection = srs ? msGetProjection(srs) : this.map.getView().getProjection();
+        const extent = projection.extent || projection?.getExtent(); // get from registry crs item or ol map
         return getResolutionsForProjection(
             srs ?? this.map.getView().getProjection().getCode(),
             {

@@ -8,8 +8,9 @@
 
 import axios from '../libs/ajax';
 
-const DEFAULT_LIMIT = 200; // kept low for the search panel; endpoint allows up to 200
-const DEFAULT_PAGE = 1;
+export const DEFAULT_LIMIT = 200; // kept low for the search panel; endpoint allows up to 200
+export const DEFAULT_PAGE = 1;
+export const DEFAULT_AUTHORITY = ''; // or EPSG?
 
 /**
  * convert bboxes object in array format, suitable for MapStore and OpenLayers
@@ -39,13 +40,13 @@ export function formatCrsExtents({bbox, bboxWGS84}) {
     };
 }
 
-export function searchProjections(endpointUrl, query, page = DEFAULT_PAGE, limit = DEFAULT_LIMIT, authority = 'EPSG') {
+export function searchProjections(endpointUrl, query, page = DEFAULT_PAGE, limit = DEFAULT_LIMIT, authority = DEFAULT_AUTHORITY) {
 
     return axios.get(`${endpointUrl}/rest/crs`, {
         params: {
             ...(query ? { query } : {}),
             ...(authority ? { authority } : {}),
-            // offset: (page - 1) * limit, // ignore per now
+            offset: (page - 1) * limit,
             limit
         }
     }).then((res) => {
@@ -71,7 +72,7 @@ export function getProjectionDef(endpointUrl, id) {
             const defproj = res.data.definition?.trim() || '';
 
             return {
-                // TODO add also label, example: "name": "Anguilla 1957 / British West Indies Grid",
+                // TODO add also label from name fielnd, example: "name": "Monte Mario / Italy zone 1",
                 code: res.data.id,
                 def: defproj,  // WKT v1 string
                 ...formatCrsExtents(res.data)
