@@ -57,6 +57,27 @@ export function appendLocale(folder) {
             });
     };
 }
+//TODO check better with some i18n files
+export function compareAndMergei18n(fallbackLanguage, targetLanguage) {
+    const mergeKeys = (base, target) => {
+        for (const key in base) {
+            if (base.hasOwnProperty(key)) {
+                if (typeof base[key] === 'object' && base[key] !== null) {
+                    if (!target[key]) {
+                        target[key] = {};
+                    }
+                    mergeKeys(base[key], target[key]);
+                } else if (!target.hasOwnProperty(key)) {
+                    target[key] = base[key];
+                }
+            }
+        }
+    };
+
+    const mergedJson = JSON.parse(JSON.stringify(targetLanguage));
+    mergeKeys(fallbackLanguage, mergedJson);
+    return mergedJson;
+}
 
 export function loadLocale(translationFolder, language) {
     return (dispatch) => {
@@ -64,10 +85,19 @@ export function loadLocale(translationFolder, language) {
         if (!locale) {
             locale = getUserLocale();
         }
+        const fallbackLocale = 'en-US'; //TODO load from new localConfig option
+        const fallbackLocaleFile = `/static/mapstore/ms-translations/data.${fallbackLocale}.json`;
+
         const folders = castArray(translationFolder || ConfigUtils.getConfigProp('translationsPath'));
-        Promise.all(folders.map((folder) => {
+        const requests = locale !== fallbackLocale ? [
+            axios.get(fallbackLocaleFile).catch(e => e),
+            ...folders.map((folder) => {
+                return axios.get(folder + `/data.${locale}.json`).catch(e => e);
+            })
+        ] : folders.map((folder) => {
             return axios.get(folder + `/data.${locale}.json`).catch(e => e);
-        })).then((responses) => {
+        });
+        Promise.all(requests).then((responses) => {
             const validResponses = responses.filter(r => r.status === 200);
             const erroredResponses = responses.filter(r => r.status !== 404 && r.status !== 200);
             if (erroredResponses.length > 0 || validResponses.length === 0) {
@@ -91,6 +121,9 @@ export function loadLocale(translationFolder, language) {
                         }
                         return previous;
                     }
+                    //TODO use compareAndMergei18n to extend response.data with fallbackLocaleFile
+                    const mergedMessages = locale !== fallbackLocale && responses[0].status === 200 ? compareAndMergei18n(JSON.parse(responses[0].data).messages, response.data.messages) : response.data.messages;
+                    response.data.messages = mergedMessages;
                     return merge(previous, response.data);
                 }, {})));
             }
