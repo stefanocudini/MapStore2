@@ -172,6 +172,17 @@ export const getMessageById = function(messages, msgId) {
     });
     return message || msgId;
 };
+export const messageIdExists = function(messages, msgId) {
+    if (!isString(msgId)) {
+        return false;
+    }
+
+    let message = messages;
+    msgId.split('.').forEach(part => {
+        message = message ? message[part] : null;
+    });
+    return message !== null && message !== undefined;
+};
 /**
  * Register a parser to translate error services
  * @param type {string} name of the service
@@ -200,6 +211,7 @@ export const getErrorMessage = (e, service, section) => {
  * @returns {string} localized string
  */
 export const getLocalizedProp = (locale, prop) => isObject(prop) ? prop[locale] || prop.default : prop || '';
+
 
 LocaleUtils = {
     getLocale,

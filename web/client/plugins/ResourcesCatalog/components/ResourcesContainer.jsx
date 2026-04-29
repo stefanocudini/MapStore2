@@ -37,7 +37,8 @@ const ResourcesContainer = (props) => {
         hideThumbnail,
         target
     } = props;
-    const messageId = getMainMessageId(props);
+    const messageIdTitle = getMainMessageId(props, 'Title');
+    const messageIdContent = getMainMessageId(props, 'Content');
     return (
         <div
             className={`ms-resources-container${theme ? ` ms-${theme}-colors` : ''} _padding-lr-md`}>
@@ -86,10 +87,10 @@ const ResourcesContainer = (props) => {
                             </li>
                         );
                     })}
-                    {messageId ? <Text textAlign="center" classNames={['_margin-auto', '_padding-lr-sm']}>
-                        <h1><HTML msgId={`${messageId}Title`}/></h1>
+                    {(messageIdTitle && messageIdContent) ? <Text textAlign="center" classNames={['_margin-auto', '_padding-lr-sm']}>
+                        <h1><HTML msgId={messageIdTitle}/></h1>
                         <p>
-                            <HTML msgId={`${messageId}Content`}/>
+                            <HTML msgId={messageIdContent}/>
                         </p>
                     </Text> : null}
                     {loading ? <FlexBox

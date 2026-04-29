@@ -33,18 +33,21 @@ import ResourcesMenu from '../components/ResourcesMenu';
 import useResourcePanelWrapper from '../hooks/useResourcePanelWrapper';
 import FlexBox from '../../../components/layout/FlexBox';
 import { isMenuItemSupportedSupported } from '../../../utils/ResourcesUtils';
+import { messageIdExists } from '../../../utils/LocaleUtils';
 
-const defaultGetMainMessageId = ({ id, query, user, isFirstRequest, error, resources, loading }) => {
+const defaultGetMainMessageId = ({ id, query, user, isFirstRequest, error, resources, loading, messages }, postfix = 'Title') => {
+    const defaultMessageId = `resourcesCatalog.catalogSection.noContentYet${postfix}`;
     const hasResources = resources?.length > 0;
     const hasFilter = Object.keys(query || {}).filter(key => key !== 'sort').length > 0;
     const isLoggedIn = !!user;
-    const messageId = !hasResources && !isFirstRequest && !loading
+    const messageIdPrefix = !hasResources && !isFirstRequest && !loading
         ? error && `resourcesCatalog.errorResourcePage`
             || hasFilter && `resourcesCatalog.noResultsWithFilter`
             || isLoggedIn && `resourcesCatalog.${id}Section.noContentYet`
             || `resourcesCatalog.${id}Section.noPublicContent`
         : undefined;
-    return messageId;
+    const messageId = messageIdPrefix ? `${messageIdPrefix}${postfix}` : undefined;
+    return messageIdExists(messages, messageId) ? messageId : defaultMessageId;
 };
 
 function ResourcesGrid({
@@ -171,6 +174,7 @@ function ResourcesGrid({
             <div className={`ms-resources-grid${panel ? ' _panel' : ''}`} style={hideWithNoResults && !resources.length ? { display: 'none' } : { }}>
                 <ResourcesContainer
                     id={id}
+                    messages={context.messages}
                     theme={theme}
                     resources={resources}
                     isFirstRequest={isFirstRequest}
@@ -253,7 +257,8 @@ function ResourcesGrid({
 }
 
 ResourcesGrid.contextTypes = {
-    plugins: PropTypes.object
+    plugins: PropTypes.object,
+    messages: PropTypes.object
 };
 
 const ConnectedResourcesGrid = connect(
