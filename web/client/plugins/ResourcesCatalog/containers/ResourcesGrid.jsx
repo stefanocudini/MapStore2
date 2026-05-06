@@ -174,6 +174,7 @@ function ResourcesGrid({
             <div className={`ms-resources-grid${panel ? ' _panel' : ''}`} style={hideWithNoResults && !resources.length ? { display: 'none' } : { }}>
                 <ResourcesContainer
                     id={id}
+                    titleId={titleId}
                     messages={context.messages}
                     theme={theme}
                     resources={resources}
