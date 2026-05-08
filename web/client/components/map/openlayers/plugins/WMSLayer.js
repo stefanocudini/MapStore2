@@ -81,10 +81,12 @@ const loadFunction = (options, headers) => function(image, src) {
                     // in ol otherwise this event is not triggered if you assign
                     // the xml content of the exception to the src attribute
                     image.getImage().src = null;
+                    image.setState(3); // error state prevent reload loop
                     console.error("error: " + response.data);
                 }
             }).catch(e => {
                 image.getImage().src = null;
+                image.setState(3);  // error state prevent reload loop
                 console.error(e);
             });
         } else {
