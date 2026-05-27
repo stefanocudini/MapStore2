@@ -805,56 +805,70 @@ export const processCQLFilterGroup = function(root, objFilter) {
     return cql;
 };
 
-export const getCQLGeometryElement = function(coordinates, type) {
-    let geometry = type + "(";
+export const getCQLGeometryElement = function(field) {
+    const {method, geometry} = field;
+    const {coordinates, type, projection, center, radius} = geometry;
+
+    let crs = projection || "";
+    crs = crs.split(":").length === 2 ? "SRID=" + crs.split(":")[1] + ";" : "";
+
+    /**
+     *  Draw buffer() instead Polygon() to optimize query request
+     */
+    if (method === 'Circle' && radius && center) {
+        const pointWkt = `POINT(${center[0]} ${center[1]})`;
+        return `buffer(${crs}${pointWkt},${radius})`;
+    }
+
+    let res = crs + type + "(";
 
     switch (type) {
     case "Point":
-        geometry += coordinates.join(" ");
+        res += coordinates.join(" ");
         break;
     case "MultiPoint":
     case "LineString":
         coordinates.forEach((position, index) => {
-            geometry += position.join(" ");
-            geometry += index < coordinates.length - 1 ? ", " : "";
+            res += position.join(" ");
+            res += index < coordinates.length - 1 ? ", " : "";
         });
         break;
     case "Polygon":
         coordinates.forEach((element, index) => {
-            geometry += "(";
+            res += "(";
             let coords = closePolygon(element).map((coordinate) => {
                 return coordinate[0] + " " + coordinate[1];
             });
-            geometry += coords.join(", ");
-            geometry += ")";
+            res += coords.join(", ");
+            res += ")";
 
-            geometry += index < coordinates.length - 1 ? ", " : "";
+            res += index < coordinates.length - 1 ? ", " : "";
         });
         break;
     case "MultiPolygon":
         coordinates.forEach((polygon, idx) => {
-            geometry += "(";
+            res += "(";
             polygon.forEach((element, index) => {
-                geometry += "(";
+                res += "(";
                 let coords = closePolygon(element).map((coordinate) => {
                     return coordinate[0] + " " + coordinate[1];
                 });
 
-                geometry += coords.join(", ");
-                geometry += ")";
+                res += coords.join(", ");
+                res += ")";
 
-                geometry += index < polygon.length - 1 ? ", " : "";
+                res += index < polygon.length - 1 ? ", " : "";
             });
-            geometry += ")";
-            geometry += idx < coordinates.length - 1 ? ", " : "";
+            res += ")";
+            res += idx < coordinates.length - 1 ? ", " : "";
         });
         break;
     default:
         break;
     }
 
-    geometry += ")";
-    return geometry;
+    res += ")";
+    return res;
 };
 
 export const processCQLSpatialFilter = function(objFilter) {
@@ -867,9 +881,7 @@ export const processCQLSpatialFilter = function(objFilter) {
         if (field.collectGeometries && field.collectGeometries.queryCollection) {
             cql += cqlCollectGeometries(cqlQueryCollection(field.collectGeometries.queryCollection));
         } else {
-            let crs = field.geometry.projection || "";
-            crs = crs.split(":").length === 2 ? "SRID=" + crs.split(":")[1] + ";" : "";
-            cql += crs + FilterUtils.getCQLGeometryElement(field.geometry.coordinates, field.geometry.type);
+            cql += FilterUtils.getCQLGeometryElement(field);
         }
         cql += ")";
 

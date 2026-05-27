@@ -26,6 +26,7 @@ import {
     processOGCSimpleFilterField,
     processCQLFilterFields,
     processCQLFilterGroup,
+    getCQLGeometryElement,
     wrapIfNoWildcards,
     mergeFiltersToOGC,
     convertFiltersToOGC,
@@ -2870,6 +2871,30 @@ describe('FilterUtils', () => {
             };
             const result = processCQLFilterGroup(objFilter.groupFields[0], objFilter);
             expect(result).toBe("NOT (\"STATE\"='IT')");
+        });
+    });
+
+    describe('getCQLGeometryElement', () => {
+        it('return filter cql string for spatial filter', () => {
+            const field = {
+                attribute: "geom",
+                geometry: {
+                    type: "Polygon",
+                    coordinates: [[
+                        [1, 2],
+                        [2, 3],
+                        [3, 4]
+                    ]],
+                    center: [1, 1],
+                    projection: "EPSG:3857",
+                    radius: 3
+                },
+                method: "Circle",
+                operation: "INTERSECTS"
+            };
+            const cqlResult = getCQLGeometryElement(field);
+
+            expect(cqlResult).toBe("buffer(SRID=3857;POINT(1 1),3)");
         });
     });
 });
