@@ -857,25 +857,61 @@ export const getCQLGeometryElement = function(coordinates, type) {
     return geometry;
 };
 
+// export const processCQLSpatialFilter = function(objFilter) {
+//     let spatialFields = (isArray(objFilter.spatialField) ? objFilter.spatialField : [objFilter.spatialField])
+//         .filter(f => f && f.geometry && f.operation);
+//     let cql = '';
+
+//     spatialFields.forEach((field, index) => {
+//         cql += field.operation + "(\"" + field.attribute + "\",";
+//         if (field.collectGeometries && field.collectGeometries.queryCollection) {
+//             cql += cqlCollectGeometries(cqlQueryCollection(field.collectGeometries.queryCollection));
+//         } else {
+//             let crs = field.geometry.projection || "";
+//             crs = crs.split(":").length === 2 ? "SRID=" + crs.split(":")[1] + ";" : "";
+//             cql += crs + FilterUtils.getCQLGeometryElement(field.geometry.coordinates, field.geometry.type);
+//         }
+//         cql += ")";
+
+//         if (index < spatialFields.length - 1) {
+//             cql += ` ${objFilter.spatialFieldOperator || "AND"} `;
+//         }
+//     });
+
+//     return cql;
+// };
+
 export const processCQLSpatialFilter = function(objFilter) {
     let spatialFields = (isArray(objFilter.spatialField) ? objFilter.spatialField : [objFilter.spatialField])
         .filter(f => f && f.geometry && f.operation);
     let cql = '';
 
     spatialFields.forEach((field, index) => {
+
+
         cql += field.operation + "(\"" + field.attribute + "\",";
         if (field.collectGeometries && field.collectGeometries.queryCollection) {
             cql += cqlCollectGeometries(cqlQueryCollection(field.collectGeometries.queryCollection));
         } else {
             let crs = field.geometry.projection || "";
             crs = crs.split(":").length === 2 ? "SRID=" + crs.split(":")[1] + ";" : "";
-            cql += crs + FilterUtils.getCQLGeometryElement(field.geometry.coordinates, field.geometry.type);
+            //cql += FilterUtils.getCQLGeometryElement(field.geometry.coordinates, field.geometry.type);
+            // INTERSECTS("geom",SRID=3857;Polygon((1231340.6843949559 5795942.036189184)))
+            if (field.method === 'Circle') {  // DRAW buffer instead polygon to optimize query: buffer(point(lon lat), radius, 'unit')
+                let {center, radius} = field.geometry;
+                const pointWkt = `POINT(${center[0]} ${center[1]})`;
+                cql += `buffer(${crs}${pointWkt},${radius})`;  //, 'meters')`; //geoserver excpetion
+                // INTERSECTS("geom",SRID=3857;BUFFER(toGeometry('POINT(1231550.8862227104 5793546.428550048)'), 2146.513, 'meters'))
+            } else {
+                cql += crs + FilterUtils.getCQLGeometryElement(field.geometry.coordinates, field.geometry.type);
+            }
         }
         cql += ")";
 
         if (index < spatialFields.length - 1) {
             cql += ` ${objFilter.spatialFieldOperator || "AND"} `;
         }
+
     });
 
     return cql;
