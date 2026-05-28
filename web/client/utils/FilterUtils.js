@@ -888,20 +888,22 @@ export const processCQLSpatialFilter = function(objFilter) {
 
     spatialFields.forEach((field, index) => {
 
-
-        cql += field.operation + "(\"" + field.attribute + "\",";
+        //cql += field.operation + "(\"" + field.attribute + "\",";  //MAY BE REMOVE double quotes
+        cql += field.operation + "(" + field.attribute + ",";  //MAY BE REMOVE double quotes
         if (field.collectGeometries && field.collectGeometries.queryCollection) {
             cql += cqlCollectGeometries(cqlQueryCollection(field.collectGeometries.queryCollection));
         } else {
             let crs = field.geometry.projection || "";
             crs = crs.split(":").length === 2 ? "SRID=" + crs.split(":")[1] + ";" : "";
-            //cql += FilterUtils.getCQLGeometryElement(field.geometry.coordinates, field.geometry.type);
-            // INTERSECTS("geom",SRID=3857;Polygon((1231340.6843949559 5795942.036189184)))
+
+            //cql += crs + FilterUtils.getCQLGeometryElement(field.geometry.coordinates, field.geometry.type);
+            // INTERSECTS(geom,SRID=3857;Polygon((1230824.7344541026 5795786.190427046, 1231396.056787871 5795729.901476195, 1231945.402425615 5795563.201975623, 1232451.6424396012 5795292.510050615, 1232895.310368424 5794928.246131222, 1233259.3521206034 5794484.42977301, 1233529.7819884063 5793978.137677787, 1233696.2194656946 5793428.844233078, 1233752.2863396513 5792857.670402795, 1233695.849075675 5792286.570247669, 1233529.0975968663 5791737.4866120275, 1233258.457919917 5791231.508518289, 1232894.3424925164 5790788.062550131, 1232450.7482388054 5790424.169020838, 1231944.7180339198 5790153.791097426, 1231395.6863977418 5789987.301406027, 1230824.7344541026 5789931.0861303685, 1230253.7825104636 5789987.301406027, 1229704.7508742858 5790153.791097426, 1229198.7206693997 5790424.169020838, 1228755.126415689 5790788.062550131, 1228391.0109882879 5791231.508518289, 1228120.371311339 5791737.4866120275, 1227953.6198325306 5792286.570247669, 1227897.182568554 5792857.670402795, 1227953.2494425108 5793428.844233078, 1228119.6869197988 5793978.137677787, 1228390.1167876017 5794484.42977301, 1228754.1585397813 5794928.246131222, 1229197.8264686042 5795292.510050615, 1229704.0664825905 5795563.201975623, 1230253.412120334 5795729.901476195, 1230824.7344541026 5795786.190427046)))
+
             if (field.method === 'Circle') {  // DRAW buffer instead polygon to optimize query: buffer(point(lon lat), radius, 'unit')
                 let {center, radius} = field.geometry;
                 const pointWkt = `POINT(${center[0]} ${center[1]})`;
-                cql += `buffer(${crs}${pointWkt},${radius})`;  //, 'meters')`; //geoserver excpetion
-                // INTERSECTS("geom",SRID=3857;BUFFER(toGeometry('POINT(1231550.8862227104 5793546.428550048)'), 2146.513, 'meters'))
+                cql += `buffer(${crs}${pointWkt},${radius})`;  //, 'meters')`; //geoserver excepetion
+                //CQL_FILTER=(INTERSECTS(geom%2Cbuffer(SRID%3D3857%3BPOINT(1231206.9195954753%205793393.478725751)%2C2899.007)))&WIDTH=512&HEIGHT=512&BBOX=1252344.271424327%2C5792092.255337514%2C1271912.150665332%2C5811660.1345785195
             } else {
                 cql += crs + FilterUtils.getCQLGeometryElement(field.geometry.coordinates, field.geometry.type);
             }
