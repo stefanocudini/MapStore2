@@ -53,13 +53,66 @@ export function toDef(def) {
     return { def, supported: false };
 }
 
+const AXIS_DIRECTION_TO_CHAR = {
+    north: 'n',
+    south: 's',
+    east: 'e',
+    west: 'w',
+    up: 'u',
+    down: 'd'
+};
+
+
+function getAxisOrientationFromProj4Metadata(proj4Metadata) {
+    const axes = proj4Metadata?.AXIS;
+    if (!Array.isArray(axes) || !axes.length) {
+        return null;
+    }
+    let axisChars = axes
+        .map((axis) => {
+            const direction = axis?.[1];
+            return AXIS_DIRECTION_TO_CHAR[String(direction || '').toLowerCase()] || '';
+        })
+        .join('');
+    if (axisChars === 'en') {
+        axisChars = 'enu';
+    }
+    if (axisChars === 'ne') {
+        axisChars = 'neu';
+    }
+    return axisChars || null;
+}
+
 export function register(projDef) {
     const { code, def, extent, worldExtent } = projDef;
     if (!code) {
         return;
     }
 
-    const { def: normalizedDef, supported } = toDef(def);
+    let { def: normalizedDef, supported } = toDef(def);
+
+    if (code === 'EPSG:3035') {
+        normalizedDef = `PROJCS["ETRS89-extended / LAEA Europe",
+  GEOGCS["ETRS89",
+    DATUM["European Terrestrial Reference System 1989",
+      SPHEROID["GRS 1980", 6378137.0, 298.257222101, AUTHORITY["EPSG","7019"]],
+      TOWGS84[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+      AUTHORITY["EPSG","6258"]],
+    PRIMEM["Greenwich", 0.0, AUTHORITY["EPSG","8901"]],
+    UNIT["degree", 0.017453292519943295],
+    AXIS["Geodetic latitude", NORTH],
+    AXIS["Geodetic longitude", EAST],
+    AUTHORITY["EPSG","4258"]],
+  PROJECTION["Lambert_Azimuthal_Equal_Area", AUTHORITY["EPSG","9820"]],
+  PARAMETER["latitude_of_center", 52.0],
+  PARAMETER["longitude_of_center", 10.0],
+  PARAMETER["false_easting", 4321000.0],
+  PARAMETER["false_northing", 3210000.0],
+  UNIT["m", 1.0],
+  AXIS["Northing", NORTH],
+  AXIS["Easting", EAST],
+  AUTHORITY["EPSG","3035"]]`;
+    }
 
     if (supported && !proj4.defs(code)) {
         proj4.defs(code, normalizedDef);
@@ -74,8 +127,21 @@ export function register(projDef) {
     const isGeographic = ['longlat', 'latlong'].includes(proj4Metadata?.projName)
         || normalizeUnit(proj4Metadata?.units) === 'degrees';
     // proj4 reports axis 'enu' even for geographic CRS - default to 'neu' (OGC/ISO lat-first order) and let projDef.axisOrientation override if needed
-    const axisOrientation = projDef?.axisOrientation || proj4Metadata?.axis || (isGeographic ? 'neu' : 'enu');
+
+    const axisOrientationFromMetadata = getAxisOrientationFromProj4Metadata(proj4Metadata);
+
+    // OLD let axisOrientation = projDef?.axisOrientation || proj4Metadata?.axis || (isGeographic ? 'neu' : 'enu');
+    const axisOrientation =
+        projDef?.axisOrientation ||
+        // axisOrientationFromMetadata ||
+        proj4Metadata?.axis ||
+        (isGeographic ? 'neu' : 'enu');
+
     const units = projDef?.units || proj4Metadata?.units || 'm';
+
+    // if (code === 'EPSG:3035') {
+    //     axisOrientation = 'neu'; // EPSG:3035 is a projected CRS but has axis order north-east (see https://epsg.io/3035)
+    // }
 
     const entry = {
         code,

@@ -82,8 +82,14 @@
             "isNew": true,
             "autoload": false
           },
-          "selectedService": "gs_stable_csw",
+          "selectedService": "gs_geonode",
           "services": {
+            "gs_geonode": {
+              "url": "https://development.demo.geonode.org/geoserver/wms",
+              "type": "wms",
+              "title": "Geonode WMS",
+              "autoload": true
+            },
             "gs_stable_csw": {
               "url": "https://gs-stable.geo-solutions.it/geoserver/csw",
               "type": "csw",
@@ -574,6 +580,7 @@
         "name": "CRSSelector",
         "cfg": {
           "allowedRoles": ["ADMIN"],
+          "projectionDefsEndpoint": "https://development.demo.geonode.org/geoserver",
           "availableProjections": [
             { "value": "EPSG:4326", "label": "EPSG:4326" },
             { "value": "EPSG:3857", "label": "EPSG:3857" }
