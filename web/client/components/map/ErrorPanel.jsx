@@ -44,12 +44,16 @@ function ErrorPanel({
                         {error.message}
                     </small>
                 </Alert>}
-                {onReload && <Button
-                    bsStyle="primary"
-                    onClick={() => onReload()}
-                >
-                    <Message msgId="map.reloadMap" />
-                </Button>}
+                {onReload && (
+                    <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
+                        <Button
+                            bsStyle="primary"
+                            onClick={() => onReload()}
+                        >
+                            <Message msgId="map.reloadMap" />
+                        </Button>
+                    </div>
+                )}
             </div>
         </div>
     );
