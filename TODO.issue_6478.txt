@@ -1,0 +1,18 @@
+
+
+quando si applica nello stile cesium un nuovo filtro con valore numerico
+
+nel componente
+/web/client/utils/styleparser/CesiumStyleParser.js
+
+si geneera un errore che arriva dalla libreria cesium:
+"Operator ">" requires number arguments...."
+
+
+quando si aggiunge una regola di rimepimento, un nuovo filtro ad esempio attributo fid1 > 1
+tramite il componente:
+web/client/components/data/query/FilterField.jsx
+
+mappa di esempio con filtro che da errore nel file:
+/home/stef/Desktop/PORTO-TRIESTE_3DTiles/map_filtro_errore.json
+a riga: 261
