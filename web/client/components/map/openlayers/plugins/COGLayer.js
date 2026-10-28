@@ -36,7 +36,9 @@ function getSource(options) {
         convertToRGB: 'auto', // CMYK, YCbCr, CIELab, and ICCLab images will automatically be converted to RGB
         sourceOptions,
         sources,
-        wrapX: true
+        wrapX: true // allow to repeat the image horizontally (for global coverage)
+        // wrapX: false,
+        // interpolate: false
     });
 }
 
