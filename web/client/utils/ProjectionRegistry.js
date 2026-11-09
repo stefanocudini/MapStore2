@@ -96,6 +96,9 @@ export function unRegister(code) {
     if (registry.has(code)) {
         registry.delete(code);
         // Note: proj4js does not support un-defining a projection once defined, so we do not attempt to do that here
+        // TODO remove using delete here the registration:
+        // https://github.com/proj4js/proj4js/blob/v2.19.10/lib/defs.js#L71-L77
+        // NOTE: This method should be kept up to date in case later versions of proj4js support a new method of removing crs
     }
 }
 
