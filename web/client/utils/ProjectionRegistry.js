@@ -61,8 +61,14 @@ export function register(projDef) {
 
     const { def: normalizedDef, supported } = toDef(def);
 
+    // keep track of whether the proj4 def is created by the registry, so that unRegister
+    // can remove it without touching defs that proj4 provides natively (e.g. EPSG:326xx/327xx)
+    // or that were defined before (by another registration path)
+    const previousEntry = registry.get(code);
+    let originalProj4Defs = !!previousEntry?.originalProj4Defs;
     if (supported && !proj4.defs(code)) {
         proj4.defs(code, normalizedDef);
+        originalProj4Defs = true;
     }
     const proj4Metadata = proj4.defs(code);
     // If proj4 already knows the code (e.g. registered earlier or via the
@@ -84,7 +90,8 @@ export function register(projDef) {
         worldExtent,
         axisOrientation,
         units,
-        supported: isSupported
+        supported: isSupported,
+        originalProj4Defs
     };
     registry.set(code, entry);
 
@@ -92,19 +99,35 @@ export function register(projDef) {
     listeners.forEach(fn => fn(entry));
 }
 
+// codes registered at module load (see BUILTIN_DEFS), their proj4 defs are never removed
+const BUILTIN_CODES = new Set();
+
+/**
+ * Removes from proj4 the def of a registry entry, only if it was created by the registry.
+ * proj4js does not expose an API to un-define a projection: defs are stored as properties
+ * of the `proj4.defs` function and looked up with `name in defs`, so deleting the property
+ * is enough to make `proj4.defs(code)` return undefined.
+ * https://github.com/proj4js/proj4js/blob/v2.19.10/lib/defs.js#L71-L77
+ * NOTE: keep this aligned with proj4js in case later versions change how defs are stored
+ * or add an official way to remove a projection.
+ * @param {object} entry registry entry
+ */
+function removeProj4Def(entry) {
+    if (entry?.originalProj4Defs && !BUILTIN_CODES.has(entry.code)) {
+        delete proj4.defs[entry.code];
+    }
+}
+
 export function unRegister(code) {
     if (registry.has(code)) {
+        removeProj4Def(registry.get(code));
         registry.delete(code);
-        // Note: proj4js does not support un-defining a projection once defined, so we do not attempt to do that here
-        // TODO remove using delete here the registration:
-        // https://github.com/proj4js/proj4js/blob/v2.19.10/lib/defs.js#L71-L77
-        // NOTE: This method should be kept up to date in case later versions of proj4js support a new method of removing crs
     }
 }
 
 export function unRegisterAll() {
+    registry.forEach(removeProj4Def);
     registry.clear();
-    // Note: proj4js does not support un-defining projections once defined, so we do not attempt to do that here
 }
 
 export function registerAll(projDefs = []) {
@@ -171,7 +194,10 @@ const BUILTIN_DEFS = [
         worldExtent: [-180, -90, 180, 90]
     }
 ];
-BUILTIN_DEFS.forEach(register);
+BUILTIN_DEFS.forEach((def) => {
+    BUILTIN_CODES.add(def.code);
+    register(def);
+});
 
 const ProjectionRegistry = {
     register,

@@ -20,12 +20,6 @@
     ]
   },
   "geoStoreUrl": "rest/geostore/",
-  "privacy": {
-    "enabled": true,
-    "policyVersion": "vanilla-2026.03-consent-1",
-    "retentionDays": 180,
-    "categories": []
-  },
   "mailingList": "https://groups.google.com/forum/#!forum/mapstore-users",
   "printUrl": "pdf/info.json",
   "mapquestApiKey": "__API_KEY_MAPQUEST__",
@@ -384,7 +378,13 @@
       "BurgerMenu",
       "Expander",
       "GlobeViewSwitcher",
-      "Cookie",
+      {
+        "name": "Cookie",
+        "cfg": {
+          "externalCookieUrl": "",
+          "declineUrl": "http://www.google.com"
+        }
+      },
       "FeedbackMask",
       { "name": "Widgets" },
       { "name": "WidgetsTray" }
@@ -572,7 +572,8 @@
       {
         "name": "CRSSelector",
         "cfg": {
-          "allowedRoles": ["ADMIN"],
+          "allowedRoles": ["ALL"],
+          "projectionDefsEndpoint": "http://localhost:9999/geoserver",
           "availableProjections": [
             { "value": "EPSG:4326", "label": "EPSG:4326" },
             { "value": "EPSG:3857", "label": "EPSG:3857" }
@@ -625,7 +626,13 @@
           }
         }
       },
-      "Cookie",
+      {
+        "name": "Cookie",
+        "cfg": {
+          "externalCookieUrl": "",
+          "declineUrl": "http://www.google.com"
+        }
+      },
       "OmniBar",
       "Login",
       { "name": "ResourceDetails", "cfg": { "resourceType": "MAP" } },
@@ -753,12 +760,7 @@
         }
       },
       "AddGroup",
-      {
-        "name": "MapFooter",
-        "cfg": {
-          "containerPosition": "footer"
-        }
-      },
+      "MapFooter",
       {
         "name": "Settings",
         "cfg": {
@@ -934,9 +936,15 @@
           "githubUrl": "https://github.com/geosolutions-it/MapStore2/tree/"
         }
       },
-      "Cookie"
+      {
+        "name": "Cookie",
+        "cfg": {
+          "externalCookieUrl": "",
+          "declineUrl": "http://www.google.com"
+        }
+      }
     ],
-    "permalink": ["Permalink", "Cookie", "FeedbackMask"],
+    "permalink": ["Permalink", "FeedbackMask"],
     "dashboard": [
       {
         "name": "LayerDownload",
@@ -1096,7 +1104,6 @@
           "preset": "dashboard_tutorial"
         }
       },
-      "Cookie",
       {
         "name": "FeedbackMask",
         "cfg": {
@@ -1107,7 +1114,6 @@
     "geostory-embedded": [
       "GeoStory",
       { "name": "SecurityPopup" },
-      "Cookie",
       {
         "name": "GeoStoryNavigation",
         "cfg": {
@@ -1129,7 +1135,6 @@
         }
       },
       { "name": "SecurityPopup" },
-      "Cookie",
       { "name": "FeedbackMask" }
     ],
     "geostory": [
@@ -1215,7 +1220,6 @@
           }
         }
       },
-      "Cookie",
       "Permalink"
     ],
     "context-creator": [
@@ -1247,7 +1251,6 @@
       "ContextImport",
       "ContextExport",
       "Notifications",
-      "Cookie",
       {
         "name": "FeedbackMask",
         "cfg": {
@@ -1264,7 +1267,6 @@
       "TagsManager",
       "IPManager",
       "Footer",
-      "Cookie",
       {
         "name": "About",
         "cfg": {
